@@ -19,6 +19,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            transition: background 0.3s ease;
         }
 
         .container {
@@ -344,13 +345,14 @@
                 <div class="version-item"><strong>1.4.0 Price Added</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.5.0 Distance Added</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.5.1 Loading Bug Fixed</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.6.0 Dark Mode Preference</strong> - 5/16/26</div>
                 <button onclick="document.getElementById('releaseModal').classList.remove('show')" style="margin-top: 20px;">Close</button>
             </div>
         </div>
 
         <footer>
             📅 Changes sync to everyone • Edits require password<br>
-            <span style="font-size: 0.7rem; color: #bbb;">Version 1.5.1</span>
+            <span style="font-size: 0.7rem; color: #bbb;">Version 1.6.0</span>
             <div id="lastEdited" style="font-size: 0.7rem; margin-top: 8px; color: #bbb;"></div>
             <br><br>
             <button class="edit-btn" onclick="showReleaseNotes()" style="background: #8b5cf6; width: auto; padding: 8px 20px;">📋 Version History</button>
@@ -419,6 +421,24 @@
                 distance: "2.1 km"
             }
         };
+        
+        // Dark Mode Functions (with memory)
+        function setDarkMode(isDark) {
+            if (isDark) {
+                document.body.style.background = '#1a1a2e';
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                localStorage.setItem('darkMode', 'false');
+            }
+        }
+        
+        function loadDarkModePreference() {
+            const savedDarkMode = localStorage.getItem('darkMode');
+            if (savedDarkMode === 'true') {
+                document.body.style.background = '#1a1a2e';
+            }
+        }
         
         function loadAndDisplay() {
             const today = new Date();
@@ -603,16 +623,6 @@
             document.getElementById('releaseModal').classList.add('show');
         }
         
-        function setDarkMode(isDark) {
-            if (isDark) {
-                document.body.style.background = '#1a1a2e';
-                localStorage.setItem('darkMode', 'true');
-            } else {
-                document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                localStorage.setItem('darkMode', 'false');
-            }
-        }
-        
         // Event Listeners
         document.getElementById('darkModeBtn').addEventListener('click', function() { setDarkMode(true); });
         document.getElementById('lightModeBtn').addEventListener('click', function() { setDarkMode(false); });
@@ -623,12 +633,8 @@
             }
         });
         
-        // Load saved dark mode
-        const savedDarkMode = localStorage.getItem('darkMode');
-        if (savedDarkMode === 'true') {
-            document.body.style.background = '#1a1a2e';
-        }
-        
+        // Load saved preferences
+        loadDarkModePreference();
         loadLastEdited();
         loadAndDisplay();
     </script>
