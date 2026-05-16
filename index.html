@@ -316,7 +316,7 @@
             
             <button class="save-btn" onclick="saveSchedule()">💾 Save to Cloud</button>
         </div>
-                <!-- Release Notes Modal -->
+                       <!-- Release Notes Modal -->
         <div class="modal" id="releaseModal">
             <div class="modal-content" style="max-width: 400px; text-align: left;">
                 <h3 style="text-align: center; margin-bottom: 20px;">📋 Version History</h3>
@@ -327,7 +327,7 @@
                     <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
                         <strong>1.0.1 Saving Bug Fixed</strong> - 5/15/26
                     </div>
-                    <div style="background: #f0f0ff; padding: 12px; border-radius:  mne 8px; margin-bottom: 8px;">
+                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
                         <strong>1.1.0 Dark-Light Mode Added</strong> - 5/16/26
                     </div>
                     <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
@@ -336,14 +336,14 @@
                     <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
                         <strong>1.2.1 Editing Schedule Bug Fixed</strong> - 5/16/26
                     </div>
-                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px;">
+                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
                         <strong>1.3.0 Version History Added</strong> - 5/16/26
                     </div>
-                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px;">
+                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
                         <strong>1.4.0 Price Added</strong> - 5/16/26
-                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px;">
-                        <strong>1.5.0 Version Distance Added</strong> - 5/16/26
                     </div>
+                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px;">
+                        <strong>1.5.0 Distance Added</strong> - 5/16/26
                     </div>
                 </div>
                 <button onclick="document.getElementById('releaseModal').classList.remove('show')" style="background: #4f46e5; color: white; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; width: 100%;">Close</button>
@@ -549,14 +549,13 @@
             const updates = {};
             
             for (const day of weekdays) {
-                                    updates[day] = {
+                                                    updates[day] = {
                     restaurant: document.getElementById(`${day}_restaurant`).value || "❓ Not set",
                     cuisine: document.getElementById(`${day}_cuisine`).value || "",
                     meetAt: document.getElementById(`${day}_meetAt`).value || "Ask the group",
                     extra: document.getElementById(`${day}_extra`).value || "",
                     price: document.getElementById(`${day}_price`).value || "$",
                     distance: document.getElementById(`${day}_distance`).value || ""
-                };
                 };
             }
             
