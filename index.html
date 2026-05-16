@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍱 Group Lunch Planner</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 32px;
+            padding: 40px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .editor-card {
+            background: white;
+            border-radius: 32px;
+            padding: 30px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: none;
+        }
+
+        .editor-card.show {
+            display: block;
+        }
+
+        .day-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .lunch-time-badge {
+            background: #e0e7ff;
+            padding: 10px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            color: #4f46e5;
+            font-weight: bold;
+        }
+
+        .weekend-message {
+            background: #ffe0b2;
+            padding: 40px 20px;
+            border-radius: 20px;
+            margin: 25px 0;
+        }
+
+        .restaurant {
+            background: #f0f0ff;
+            padding: 20px;
+            border-radius: 20px;
+            margin: 25px 0;
+        }
+
+        .restaurant-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .meetup {
+            background: #fff8e7;
+            padding: 20px;
+            border-radius: 20px;
+            margin: 25px 0;
+        }
+
+        .meetup h3 {
+            color: #e67e22;
+            margin-bottom: 10px;
+        }
+
+        .meetup p {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .extra-note {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 20px;
+            margin: 25px 0;
+            color: #2e7d32;
+        }
+
+        .edit-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .edit-btn:hover {
+            background: #4338ca;
+        }
+
+        .day-editor {
+            border: 1px solid #ddd;
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .day-editor h3 {
+            margin-bottom: 10px;
+            color: #4f46e5;
+        }
+
+        .day-editor input, .day-editor textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        .day-editor textarea {
+            resize: vertical;
+        }
+
+        .save-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .save-btn:hover {
+            background: #059669;
+        }
+
+        .close-btn {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 350px;
+            width: 90%;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            margin: 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .modal-content button {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+
+        .error-msg {
+            color: red;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .loading {
+            color: #666;
+            padding: 20px;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #aaa;
+            text-align: center;
+        }
+
+        .group-badge {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card" id="displayCard">
+            <div class="day-badge" id="day-badge">🍴 LUNCH PLAN</div>
+            <div class="lunch-time-badge">⏰ 11:40 AM - 12:40 PM</div>
+            <h1>🍽️ Lunch Time!</h1>
+            
+            <div id="weekend-content" style="display: none;" class="weekend-message">
+                <h2>🌿 No Lunch Plan Today</h2>
+                <p>It's the weekend! 🎉<br>See you Monday at 11:40 AM!</p>
+            </div>
+            
+            <div id="weekday-content">
+                <div id="loadingMsg" class="loading">Loading today's lunch plan...</div>
+                <div id="planContent" style="display: none;">
+                                                            <div class="restaurant">
+                        <div style="font-size: 2.5rem;">📍</div>
+                        <div class="restaurant-name" id="restaurant-name"></div>
+                        <div id="restaurant-type" style="color: #666;"></div>
+                        <div id="restaurant-price" style="margin-top: 8px; font-weight: bold;"></div>
+                        <div id="restaurant-distance" style="margin-top: 5px; font-size: 0.8rem; color: #666;"></div>
+                    </div>
+                    
+                    <div class="meetup">
+                        <h3>🤝 Meet at</h3>
+                        <p id="meetup-location"></p>
+                    </div>
+                    
+                    <div id="extra-info" class="extra-note" style="display: none;"></div>
+                </div>
+            </div>
+            
+                      <button class="edit-btn" onclick="showPasswordModal()">✏️ Edit Schedule</button>
+            <br><br>
+            <button class="edit-btn" onclick="document.body.style.background='#1a1a2e'" style="background: #333; width: auto; padding: 8px 20px;">🌙 Dark Mode</button>
+            <button class="edit-btn" onclick="document.body.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'" style="background: #667eea; width: auto; padding: 8px 20px;">☀️ Light Mode</button>
+            <div class="group-badge">🌐 Changes sync to everyone instantly!</div>
+        </div>  <!-- This closes the card div -->
+
+        <div class="modal" id="passwordModal">
+            <div class="modal-content">
+                <h3>🔐 Group Password Required</h3>
+                <p>Enter the password to edit the schedule:</p>
+                <input type="password" id="passwordInput" placeholder="Enter password">
+                <button onclick="checkPassword()">Unlock Editor</button>
+                <div id="passwordError" class="error-msg"></div>
+            </div>
+        </div>
+
+        <div class="editor-card" id="editorCard">
+            <button class="close-btn" onclick="hideEditor()">← Back to Lunch Plan</button>
+            <h2 style="margin-bottom: 20px;">📝 Edit Weekly Schedule</h2>
+            <p style="margin-bottom: 20px; color: #666;">Changes save to the cloud — everyone sees them immediately!</p>
+            
+            <div id="editorFields"></div>
+            
+            <button class="save-btn" onclick="saveSchedule()">💾 Save to Cloud</button>
+        </div>
+                <!-- Release Notes Modal -->
+        <div class="modal" id="releaseModal">
+            <div class="modal-content" style="max-width: 400px; text-align: left;">
+                <h3 style="text-align: center; margin-bottom: 20px;">📋 Version History</h3>
+                <div style="margin-bottom: 15px;">
+                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
+                        <strong>1.0.0 Release</strong> - 5/14/26
+                    </div>
+                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
+                        <strong>1.0.1 Saving Bug Fixed</strong> - 5/15/26
+                    </div>
+                    <div style="background: #f0f0ff; padding: 12px; border-radius:  mne 8px; margin-bottom: 8px;">
+                        <strong>1.1.0 Dark-Light Mode Added</strong> - 5/16/26
+                    </div>
+                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
+                        <strong>1.2.0 Last Updated Date Added</strong> - 5/16/26
+                    </div>
+                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
+                        <strong>1.2.1 Editing Schedule Bug Fixed</strong> - 5/16/26
+                    </div>
+                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px;">
+                        <strong>1.3.0 Version History Added</strong> - 5/16/26
+                    </div>
+                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px;">
+                        <strong>1.4.0 Price Added</strong> - 5/16/26
+                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px;">
+                        <strong>1.5.0 Version Distance Added</strong> - 5/16/26
+                    </div>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('releaseModal').classList.remove('show')" style="background: #4f46e5; color: white; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; width: 100%;">Close</button>
+            </div>
+        </div>
+               <footer>
+    📅 Changes sync to everyone • Edits require password<br>
+    <span style="font-size: 0.7rem; color: #bbb;">Version 1.5.0</span>
+<div id="lastEdited" style="font-size: 0.7rem; margin-top: 8px; color: #bbb;"></div>
+<br><br>
+<button class="edit-btn" onclick="showReleaseNotes()" style="background: #8b5cf6; width: auto; padding: 8px 20px;">📋 Version History</button>
+</footer>
+    </div>
+
+    <script>
+               // ============================================
+        // 🔧 FIREBASE CONFIG
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBuMR9Phku_45lH17Kyc5tgpB3k95OuUeU",
+            authDomain: "lunch-6cabf.firebaseapp.com",
+            databaseURL: "https://lunch-6cabf-default-rtdb.firebaseio.com",
+            projectId: "lunch-6cabf",
+            storageBucket: "lunch-6cabf.firebasestorage.app",
+            messagingSenderId: "626949491223",
+            appId: "1:626949491223:web:8f5aade610b62a653b6a52"
+        };
+        
+        
+        // ============================================
+        const GROUP_PASSWORD = "popeyes";
+        // ============================================
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+        
+        // Default schedule (used if nothing in database yet)
+                        const defaultSchedule = {
+            "Monday": {
+                restaurant: "Tims ☕",
+                cuisine: "Baked Goods And Coffee",
+                meetAt: "Library",
+                extra: "Hi",
+                price: "$",
+                distance: "0.35 km"
+            },
+            "Tuesday": {
+                restaurant: "Stay In 🍱",
+                cuisine: "Whatever You Bring",
+                meetAt: "Cafeteria",
+                extra: "Sami Ur Closest, Secure A Table",
+                price: "$",
+                distance: "0 km (in building)"
+            },
+            "Wednesday": {
+                restaurant: "Popeyes 🍗",
+                cuisine: "Chicken",
+                meetAt: "Library",
+                extra: "Ts Better Not Take 40 Mins Ts Time",
+                price: "$$",
+                distance: "0.6 km"
+            },
+            "Thursday": {
+                restaurant: "Jack Baseball ⚾",
+                cuisine: "Don't Eat Baseballs",
+                meetAt: "Neilson Park",
+                extra: "Sami And Thi Do whatever You Want",
+                price: "$",
+                distance: "5.2 km"
+            },
+            "Friday": {
+                restaurant: "Dollorama 🍬",
+                cuisine: "Snacks",
+                meetAt: "Downstairs Bathroom",
+                extra: "U Can Get Subway Or Little Caesars If U Want",
+                price: "$",
+                distance: "2.1 km"
+            }
+        };
+        
+        // Load schedule from Firebase and display
+        function loadAndDisplay() {
+            const today = new Date();
+            const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
+            const isWeekend = (dayName === "Saturday" || dayName === "Sunday");
+            
+            if (isWeekend) {
+                document.getElementById('weekend-content').style.display = 'block';
+                document.getElementById('weekday-content').style.display = 'none';
+                document.getElementById('day-badge').textContent = '🌙 WEEKEND MODE';
+                return;
+            }
+            
+            document.getElementById('weekend-content').style.display = 'none';
+            document.getElementById('weekday-content').style.display = 'block';
+            document.getElementById('loadingMsg').style.display = 'block';
+            document.getElementById('planContent').style.display = 'none';
+            
+            // Fetch from Firebase
+            database.ref('schedule/' + dayName).once('value').then((snapshot) => {
+                let plan = snapshot.val();
+                
+                if (!plan) {
+                    // Use default if nothing in database
+                    plan = defaultSchedule[dayName];
+                    // Save default to database
+                    database.ref('schedule/' + dayName).set(plan);
+                }
+                
+                document.getElementById('loadingMsg').style.display = 'none';
+                document.getElementById('planContent').style.display = 'block';
+                document.getElementById('day-badge').textContent = `🍴 ${dayName.toUpperCase()}'S PLAN`;
+                document.getElementById('restaurant-name').textContent = plan.restaurant;
+                document.getElementById('restaurant-type').textContent = plan.cuisine || "";
+                document.getElementById('meetup-location').textContent = plan.meetAt;
+                // Display price range
+                const priceSymbol = plan.price || "$";
+                let priceDisplay = "";
+                if (priceSymbol === "$") priceDisplay = "💵 $ (Budget friendly)";
+                else if (priceSymbol === "$$") priceDisplay = "💰 $$ (Moderate)";
+                else if (priceSymbol === "$$$") priceDisplay = "💎 $$$ (Fancy)";
+                else priceDisplay = `💵 ${priceSymbol}`;
+                document.getElementById('restaurant-price').textContent = priceDisplay;
+                // Display distance
+                const distance = plan.distance || "Unknown";
+                document.getElementById('restaurant-distance').innerHTML = `📏 Distance: ${distance}`;
+                
+                if (plan.extra && plan.extra.trim() !== "") {
+                    const extraDiv = document.getElementById('extra-info');
+                    extraDiv.style.display = 'block';
+                    extraDiv.innerHTML = `✨ <strong>Extra:</strong> ${plan.extra}`;
+                } else {
+                    document.getElementById('extra-info').style.display = 'none';
+                }
+            });
+        }
+        
+        function showPasswordModal() {
+            document.getElementById('passwordModal').classList.add('show');
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordError').textContent = '';
+        }
+        
+        function checkPassword() {
+            const enteredPassword = document.getElementById('passwordInput').value;
+            if (enteredPassword === GROUP_PASSWORD) {
+                document.getElementById('passwordModal').classList.remove('show');
+                showEditor();
+            } else {
+                document.getElementById('passwordError').textContent = '❌ Wrong password!';
+            }
+        }
+        
+        async function showEditor() {
+            document.getElementById('displayCard').style.display = 'none';
+            document.getElementById('editorCard').classList.add('show');
+            
+            const editorDiv = document.getElementById('editorFields');
+            editorDiv.innerHTML = '<div class="loading">Loading current schedule...</div>';
+            
+            // Load current schedule from Firebase for all days
+            const snapshot = await database.ref('schedule').once('value');
+            const currentSchedule = snapshot.val() || {};
+            
+            editorDiv.innerHTML = '';
+            
+            for (const day of weekdays) {
+                const plan = currentSchedule[day] || defaultSchedule[day];
+                
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'day-editor';
+                                dayDiv.innerHTML = `
+                    <h3>${day}</h3>
+                    <input type="text" id="${day}_restaurant" placeholder="Restaurant name" value="${escapeHtml(plan.restaurant || '')}">
+                    <input type="text" id="${day}_cuisine" placeholder="Cuisine (optional)" value="${escapeHtml(plan.cuisine || '')}">
+                    <input type="text" id="${day}_meetAt" placeholder="Where to meet" value="${escapeHtml(plan.meetAt || '')}">
+                    <select id="${day}_price" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 8px;">
+                        <option value="$" ${plan.price === "$" ? "selected" : ""}>$ - Budget friendly</option>
+                        <option value="$$" ${plan.price === "$$" ? "selected" : ""}>$$ - Moderate</option>
+                        <option value="$$$" ${plan.price === "$$$" ? "selected" : ""}>$$$ - Fancy</option>
+                    </select>
+                    <input type="text" id="${day}_distance" placeholder="Distance (e.g., 0.3 miles)" value="${escapeHtml(plan.distance || '')}">
+                    <textarea id="${day}_extra" placeholder="Extra notes / deals (optional)" rows="2">${escapeHtml(plan.extra || '')}</textarea>
+                `;
+                editorDiv.appendChild(dayDiv);
+            }
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        async function saveSchedule() {
+            const updates = {};
+            
+            for (const day of weekdays) {
+                                    updates[day] = {
+                    restaurant: document.getElementById(`${day}_restaurant`).value || "❓ Not set",
+                    cuisine: document.getElementById(`${day}_cuisine`).value || "",
+                    meetAt: document.getElementById(`${day}_meetAt`).value || "Ask the group",
+                    extra: document.getElementById(`${day}_extra`).value || "",
+                    price: document.getElementById(`${day}_price`).value || "$",
+                    distance: document.getElementById(`${day}_distance`).value || ""
+                };
+                };
+            }
+            
+            // Show saving indicator
+            const saveBtn = document.querySelector('.save-btn');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = '💾 Saving...';
+            saveBtn.disabled = true;
+            
+            try {
+                // Save all days to Firebase
+                for (const [day, plan] of Object.entries(updates)) {
+                    await database.ref('schedule/' + day).set(plan);
+                }
+                
+                alert("✅ Schedule saved to cloud! Everyone will see the updated plan.");
+updateLastEdited(); 
+                // Save timestamp to Firebase
+                const now = new Date();
+                const timeString = now.toLocaleTimeString();
+                const dateString = now.toLocaleDateString();
+                await database.ref('lastEdited').set(`${dateString} at ${timeString}`);
+                hideEditor();
+                loadAndDisplay();
+            } catch (error) {
+                alert("❌ Error saving: " + error.message);
+            } finally {
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+            }
+        }
+        
+        function hideEditor() {
+            document.getElementById('displayCard').style.display = 'block';
+            document.getElementById('editorCard').classList.remove('show');
+        }
+                function updateLastEdited() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            const dateString = now.toLocaleDateString();
+            document.getElementById('lastEdited').innerHTML = `🕐 Last saved: ${dateString} at ${timeString}`;
+        }
+
+                function loadLastEdited() {
+            database.ref('lastEdited').once('value').then((snapshot) => {
+                const lastSaved = snapshot.val();
+                if (lastSaved) {
+                    document.getElementById('lastEdited').innerHTML = `🕐 Last saved: ${lastSaved}`;
+                } else {
+                    updateLastEdited();
+                }
+            });
+        }
+
+        document.getElementById('passwordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('show');
+            }
+        });
+        
+        // Load and display when page loads
+        loadLastEdited();
+        loadAndDisplay();
+
+        // Show release notes
+        function showReleaseNotes() {
+            document.getElementById('releaseModal').classList.add('show');
+        }
+    </script>
+</body>
+</html>
