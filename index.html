@@ -149,7 +149,7 @@
             color: #4f46e5;
         }
 
-        .day-editor input, .day-editor textarea {
+        .day-editor input, .day-editor textarea, .day-editor select {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -211,8 +211,10 @@
             padding: 30px;
             border-radius: 24px;
             text-align: center;
-            max-width: 350px;
+            max-width: 400px;
             width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         .modal-content input {
@@ -256,6 +258,21 @@
             font-size: 0.8rem;
             color: #888;
         }
+
+        .history-item {
+            background: #f0f0ff;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .version-item {
+            background: #f0f0ff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
@@ -273,7 +290,7 @@
             <div id="weekday-content">
                 <div id="loadingMsg" class="loading">Loading today's lunch plan...</div>
                 <div id="planContent" style="display: none;">
-                                                            <div class="restaurant">
+                    <div class="restaurant">
                         <div style="font-size: 2.5rem;">📍</div>
                         <div class="restaurant-name" id="restaurant-name"></div>
                         <div id="restaurant-type" style="color: #666;"></div>
@@ -290,12 +307,12 @@
                 </div>
             </div>
             
-                      <button class="edit-btn" onclick="showPasswordModal()">✏️ Edit Schedule</button>
+            <button class="edit-btn" onclick="showPasswordModal()">✏️ Edit Schedule</button>
             <br><br>
-            <button class="edit-btn" onclick="document.body.style.background='#1a1a2e'" style="background: #333; width: auto; padding: 8px 20px;">🌙 Dark Mode</button>
-            <button class="edit-btn" onclick="document.body.style.background='linear-gradient(135deg, #667eea 0%, #764ba2 100%)'" style="background: #667eea; width: auto; padding: 8px 20px;">☀️ Light Mode</button>
+            <button class="edit-btn" id="darkModeBtn" style="background: #333; width: auto; padding: 8px 20px;">🌙 Dark Mode</button>
+            <button class="edit-btn" id="lightModeBtn" style="background: #667eea; width: auto; padding: 8px 20px;">☀️ Light Mode</button>
             <div class="group-badge">🌐 Changes sync to everyone instantly!</div>
-        </div>  <!-- This closes the card div -->
+        </div>
 
         <div class="modal" id="passwordModal">
             <div class="modal-content">
@@ -311,57 +328,37 @@
             <button class="close-btn" onclick="hideEditor()">← Back to Lunch Plan</button>
             <h2 style="margin-bottom: 20px;">📝 Edit Weekly Schedule</h2>
             <p style="margin-bottom: 20px; color: #666;">Changes save to the cloud — everyone sees them immediately!</p>
-            
             <div id="editorFields"></div>
-            
             <button class="save-btn" onclick="saveSchedule()">💾 Save to Cloud</button>
         </div>
-                       <!-- Release Notes Modal -->
+
         <div class="modal" id="releaseModal">
-            <div class="modal-content" style="max-width: 400px; text-align: left;">
-                <h3 style="text-align: center; margin-bottom: 20px;">📋 Version History</h3>
-                <div style="margin-bottom: 15px;">
-                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
-                        <strong>1.0.0 Release</strong> - 5/14/26
-                    </div>
-                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
-                        <strong>1.0.1 Saving Bug Fixed</strong> - 5/15/26
-                    </div>
-                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
-                        <strong>1.1.0 Dark-Light Mode Added</strong> - 5/16/26
-                    </div>
-                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
-                        <strong>1.2.0 Last Updated Date Added</strong> - 5/16/26
-                    </div>
-                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
-                        <strong>1.2.1 Editing Schedule Bug Fixed</strong> - 5/16/26
-                    </div>
-                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
-                        <strong>1.3.0 Version History Added</strong> - 5/16/26
-                    </div>
-                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px;">
-                        <strong>1.4.0 Price Added</strong> - 5/16/26
-                    </div>
-                    <div style="background: #f0f0ff; padding: 12px; border-radius: 8px;">
-                        <strong>1.5.0 Distance Added</strong> - 5/16/26
-                    </div>
-                </div>
-                <button onclick="document.getElementById('releaseModal').classList.remove('show')" style="background: #4f46e5; color: white; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; width: 100%;">Close</button>
+            <div class="modal-content">
+                <h3 style="margin-bottom: 20px;">📋 Version History</h3>
+                <div class="version-item"><strong>1.0.0 Release</strong> - 5/14/26</div>
+                <div class="version-item"><strong>1.0.1 Saving Bug Fixed</strong> - 5/15/26</div>
+                <div class="version-item"><strong>1.1.0 Dark-Light Mode Added</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.2.0 Last Updated Date Added</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.2.1 Editing Schedule Bug Fixed</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.3.0 Version History Added</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.4.0 Price Added</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.5.0 Distance Added</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.5.1 Loading Bug Fixed</strong> - 5/16/26</div>
+                <button onclick="document.getElementById('releaseModal').classList.remove('show')" style="margin-top: 20px;">Close</button>
             </div>
         </div>
-               <footer>
-    📅 Changes sync to everyone • Edits require password<br>
-    <span style="font-size: 0.7rem; color: #bbb;">Version 1.5.0</span>
-<div id="lastEdited" style="font-size: 0.7rem; margin-top: 8px; color: #bbb;"></div>
-<br><br>
-<button class="edit-btn" onclick="showReleaseNotes()" style="background: #8b5cf6; width: auto; padding: 8px 20px;">📋 Version History</button>
-</footer>
+
+        <footer>
+            📅 Changes sync to everyone • Edits require password<br>
+            <span style="font-size: 0.7rem; color: #bbb;">Version 1.5.1</span>
+            <div id="lastEdited" style="font-size: 0.7rem; margin-top: 8px; color: #bbb;"></div>
+            <br><br>
+            <button class="edit-btn" onclick="showReleaseNotes()" style="background: #8b5cf6; width: auto; padding: 8px 20px;">📋 Version History</button>
+        </footer>
     </div>
 
     <script>
-               // ============================================
-        // 🔧 FIREBASE CONFIG
-        // ============================================
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyBuMR9Phku_45lH17Kyc5tgpB3k95OuUeU",
             authDomain: "lunch-6cabf.firebaseapp.com",
@@ -372,10 +369,7 @@
             appId: "1:626949491223:web:8f5aade610b62a653b6a52"
         };
         
-        
-        // ============================================
         const GROUP_PASSWORD = "popeyes";
-        // ============================================
         
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -383,8 +377,7 @@
         
         const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
         
-        // Default schedule (used if nothing in database yet)
-                        const defaultSchedule = {
+        const defaultSchedule = {
             "Monday": {
                 restaurant: "Tims ☕",
                 cuisine: "Baked Goods And Coffee",
@@ -427,7 +420,6 @@
             }
         };
         
-        // Load schedule from Firebase and display
         function loadAndDisplay() {
             const today = new Date();
             const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
@@ -445,14 +437,11 @@
             document.getElementById('loadingMsg').style.display = 'block';
             document.getElementById('planContent').style.display = 'none';
             
-            // Fetch from Firebase
             database.ref('schedule/' + dayName).once('value').then((snapshot) => {
                 let plan = snapshot.val();
                 
                 if (!plan) {
-                    // Use default if nothing in database
                     plan = defaultSchedule[dayName];
-                    // Save default to database
                     database.ref('schedule/' + dayName).set(plan);
                 }
                 
@@ -462,7 +451,7 @@
                 document.getElementById('restaurant-name').textContent = plan.restaurant;
                 document.getElementById('restaurant-type').textContent = plan.cuisine || "";
                 document.getElementById('meetup-location').textContent = plan.meetAt;
-                // Display price range
+                
                 const priceSymbol = plan.price || "$";
                 let priceDisplay = "";
                 if (priceSymbol === "$") priceDisplay = "💵 $ (Budget friendly)";
@@ -470,7 +459,7 @@
                 else if (priceSymbol === "$$$") priceDisplay = "💎 $$$ (Fancy)";
                 else priceDisplay = `💵 ${priceSymbol}`;
                 document.getElementById('restaurant-price').textContent = priceDisplay;
-                // Display distance
+                
                 const distance = plan.distance || "Unknown";
                 document.getElementById('restaurant-distance').innerHTML = `📏 Distance: ${distance}`;
                 
@@ -481,6 +470,9 @@
                 } else {
                     document.getElementById('extra-info').style.display = 'none';
                 }
+            }).catch(error => {
+                console.error("Firebase error:", error);
+                document.getElementById('loadingMsg').innerHTML = '❌ Error loading data. Check console.';
             });
         }
         
@@ -507,7 +499,6 @@
             const editorDiv = document.getElementById('editorFields');
             editorDiv.innerHTML = '<div class="loading">Loading current schedule...</div>';
             
-            // Load current schedule from Firebase for all days
             const snapshot = await database.ref('schedule').once('value');
             const currentSchedule = snapshot.val() || {};
             
@@ -518,12 +509,12 @@
                 
                 const dayDiv = document.createElement('div');
                 dayDiv.className = 'day-editor';
-                                dayDiv.innerHTML = `
+                dayDiv.innerHTML = `
                     <h3>${day}</h3>
                     <input type="text" id="${day}_restaurant" placeholder="Restaurant name" value="${escapeHtml(plan.restaurant || '')}">
                     <input type="text" id="${day}_cuisine" placeholder="Cuisine (optional)" value="${escapeHtml(plan.cuisine || '')}">
                     <input type="text" id="${day}_meetAt" placeholder="Where to meet" value="${escapeHtml(plan.meetAt || '')}">
-                    <select id="${day}_price" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 8px;">
+                    <select id="${day}_price">
                         <option value="$" ${plan.price === "$" ? "selected" : ""}>$ - Budget friendly</option>
                         <option value="$$" ${plan.price === "$$" ? "selected" : ""}>$$ - Moderate</option>
                         <option value="$$$" ${plan.price === "$$$" ? "selected" : ""}>$$$ - Fancy</option>
@@ -549,7 +540,7 @@
             const updates = {};
             
             for (const day of weekdays) {
-                                                    updates[day] = {
+                updates[day] = {
                     restaurant: document.getElementById(`${day}_restaurant`).value || "❓ Not set",
                     cuisine: document.getElementById(`${day}_cuisine`).value || "",
                     meetAt: document.getElementById(`${day}_meetAt`).value || "Ask the group",
@@ -559,21 +550,18 @@
                 };
             }
             
-            // Show saving indicator
             const saveBtn = document.querySelector('.save-btn');
             const originalText = saveBtn.textContent;
             saveBtn.textContent = '💾 Saving...';
             saveBtn.disabled = true;
             
             try {
-                // Save all days to Firebase
                 for (const [day, plan] of Object.entries(updates)) {
                     await database.ref('schedule/' + day).set(plan);
                 }
                 
-                alert("✅ Schedule saved to cloud! Everyone will see the updated plan.");
-updateLastEdited(); 
-                // Save timestamp to Firebase
+                alert("✅ Schedule saved to cloud!");
+                updateLastEdited();
                 const now = new Date();
                 const timeString = now.toLocaleTimeString();
                 const dateString = now.toLocaleDateString();
@@ -592,14 +580,15 @@ updateLastEdited();
             document.getElementById('displayCard').style.display = 'block';
             document.getElementById('editorCard').classList.remove('show');
         }
-                function updateLastEdited() {
+        
+        function updateLastEdited() {
             const now = new Date();
             const timeString = now.toLocaleTimeString();
             const dateString = now.toLocaleDateString();
             document.getElementById('lastEdited').innerHTML = `🕐 Last saved: ${dateString} at ${timeString}`;
         }
-
-                function loadLastEdited() {
+        
+        function loadLastEdited() {
             database.ref('lastEdited').once('value').then((snapshot) => {
                 const lastSaved = snapshot.val();
                 if (lastSaved) {
@@ -609,21 +598,39 @@ updateLastEdited();
                 }
             });
         }
-
+        
+        function showReleaseNotes() {
+            document.getElementById('releaseModal').classList.add('show');
+        }
+        
+        function setDarkMode(isDark) {
+            if (isDark) {
+                document.body.style.background = '#1a1a2e';
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                localStorage.setItem('darkMode', 'false');
+            }
+        }
+        
+        // Event Listeners
+        document.getElementById('darkModeBtn').addEventListener('click', function() { setDarkMode(true); });
+        document.getElementById('lightModeBtn').addEventListener('click', function() { setDarkMode(false); });
+        
         document.getElementById('passwordModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 this.classList.remove('show');
             }
         });
         
-        // Load and display when page loads
+        // Load saved dark mode
+        const savedDarkMode = localStorage.getItem('darkMode');
+        if (savedDarkMode === 'true') {
+            document.body.style.background = '#1a1a2e';
+        }
+        
         loadLastEdited();
         loadAndDisplay();
-
-        // Show release notes
-        function showReleaseNotes() {
-            document.getElementById('releaseModal').classList.add('show');
-        }
     </script>
 </body>
 </html>
