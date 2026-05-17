@@ -543,16 +543,13 @@
             }
         }
         
-                // Countdown to 11:40 AM
+        // Countdown to 11:40 AM Toronto time
         function updateCountdown() {
-            const now = new Date();
-            const lunchStartTime = new Date();
-            lunchStartTime.setHours(11, 40, 0, 0);
+            // Get current time in Toronto
+            const torontoNow = new Date().toLocaleString('en-US', { timeZone: 'America/Toronto' });
+            const nowToronto = new Date(torontoNow);
             
-            const lunchEndTime = new Date();
-            lunchEndTime.setHours(12, 40, 0, 0);
-            
-            const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
+            const dayName = nowToronto.toLocaleDateString('en-US', { weekday: 'long' });
             const isWeekend = (dayName === "Saturday" || dayName === "Sunday");
             
             if (isWeekend) {
@@ -560,17 +557,31 @@
                 return;
             }
             
-            if (now >= lunchStartTime && now <= lunchEndTime) {
+            const currentHour = nowToronto.getHours();
+            const currentMinute = nowToronto.getMinutes();
+            
+            // Check if current time is between 11:40 AM and 12:40 PM Toronto time
+            if ((currentHour === 11 && currentMinute >= 40) || (currentHour === 12 && currentMinute <= 40)) {
                 document.getElementById('countdownDisplay').innerHTML = '🍽️ Lunch time is NOW! 🍽️';
                 return;
             }
             
-            if (now > lunchEndTime) {
+            // Check if after 12:40 PM Toronto time
+            if (currentHour >= 13 || (currentHour === 12 && currentMinute > 40)) {
                 document.getElementById('countdownDisplay').innerHTML = '✅ Lunch is over! See you tomorrow.';
                 return;
             }
             
-            const diff = lunchStartTime - now;
+            // Calculate time until lunch in Toronto
+            let targetTime = new Date(nowToronto);
+            targetTime.setHours(11, 40, 0, 0);
+            
+            // If it's past 11:40 already, target tomorrow
+            if (nowToronto > targetTime) {
+                targetTime.setDate(targetTime.getDate() + 1);
+            }
+            
+            const diff = targetTime - nowToronto;
             const hours = Math.floor(diff / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
@@ -585,7 +596,7 @@
             document.getElementById('countdownDisplay').innerHTML = countdownText;
         }
         
-               // Check if it's 11:40 AM Toronto time and refresh
+        // Check if it's 11:40 AM Toronto time and refresh
         function checkAndRefreshAt1140() {
             const torontoNow = new Date().toLocaleString('en-US', { timeZone: 'America/Toronto' });
             const currentHour = new Date(torontoNow).getHours();
