@@ -585,20 +585,19 @@
             document.getElementById('countdownDisplay').innerHTML = countdownText;
         }
         
-        // Check if it's 11:40 AM and refresh
+               // Check if it's 11:40 AM Toronto time and refresh
         function checkAndRefreshAt1140() {
-            const now = new Date();
-            const currentHour = now.getHours();
-            const currentMinute = now.getMinutes();
-            const currentSecond = now.getSeconds();
+            const torontoNow = new Date().toLocaleString('en-US', { timeZone: 'America/Toronto' });
+            const currentHour = new Date(torontoNow).getHours();
+            const currentMinute = new Date(torontoNow).getMinutes();
+            const currentSecond = new Date(torontoNow).getSeconds();
             
-            // Check if it's 11:40:00 AM
+            // Check if it's 11:40:00 AM Toronto time
             if (currentHour === 11 && currentMinute === 40 && currentSecond === 0) {
-                // Reload the page to refresh lunch plan
                 location.reload();
             }
         }
-        
+
         // Restaurant Stats Functions
         async function incrementVisitCount(restaurantName) {
             const statsRef = database.ref('restaurantStats/' + restaurantName);
