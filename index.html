@@ -260,19 +260,86 @@
             color: #888;
         }
 
-        .history-item {
-            background: #f0f0ff;
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            text-align: left;
-        }
-
         .version-item {
             background: #f0f0ff;
             padding: 12px;
             border-radius: 8px;
             margin-bottom: 8px;
+        }
+
+        /* Stats Panel Styles */
+        .stats-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f0f0ff;
+            padding: 15px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            text-align: left;
+        }
+
+        .stats-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stats-pin {
+            font-size: 2rem;
+            background: white;
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            width: 55px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stats-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stats-name {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .stats-right {
+            text-align: right;
+        }
+
+        .stats-visits {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #4f46e5;
+        }
+
+        .stats-streak {
+            font-size: 0.7rem;
+            color: #e67e22;
+        }
+
+        .streak-fire {
+            font-size: 0.8rem;
+        }
+
+        .reset-stats-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .reset-stats-btn:hover {
+            background: #dc2626;
         }
     </style>
 </head>
@@ -315,6 +382,15 @@
             <div class="group-badge">🌐 Changes sync to everyone instantly!</div>
         </div>
 
+        <!-- Restaurant Stats Panel -->
+        <div class="card" id="statsCard">
+            <div class="day-badge" style="background: #10b981;">📊 RESTAURANT STATS</div>
+            <div id="statsContent">
+                <div class="loading">Loading stats...</div>
+            </div>
+            <button class="reset-stats-btn" onclick="resetAllStats()">Reset All Stats</button>
+        </div>
+
         <div class="modal" id="passwordModal">
             <div class="modal-content">
                 <h3>🔐 Group Password Required</h3>
@@ -336,17 +412,17 @@
         <div class="modal" id="releaseModal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 20px;">📋 Version History</h3>
-                <!-- NEWEST VERSIONS AT THE TOP -->
-                <div class="version-item"><strong>1.7.0 Version History Updated</strong> - 5/16/26</div>
-                <div class="version-item"><strong>1.6.0 Dark Mode Updated</strong> - 5/16/26</div>
-                <div class="version-item"><strong>1.5.1 Loading Bug Patched</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.8.0 Restaurant Stats Added</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.7.0 Version History Update</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.6.0 Dark Mode Update</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.5.1 Loading Bug Fixed</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.5.0 Distance Added</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.4.0 Price Added</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.3.0 Version History Added</strong> - 5/16/26</div>
-                <div class="version-item"><strong>1.2.1 Editing Schedule Bug Patched</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.2.1 Editing Schedule Bug Fixed</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.2.0 Last Updated Date Added</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.1.0 Dark-Light Mode Added</strong> - 5/16/26</div>
-                <div class="version-item"><strong>1.0.1 Saving Bug Patched</strong> - 5/15/26</div>
+                <div class="version-item"><strong>1.0.1 Saving Bug Fixed</strong> - 5/15/26</div>
                 <div class="version-item"><strong>1.0.0 Release</strong> - 5/14/26</div>
                 <button onclick="document.getElementById('releaseModal').classList.remove('show')" style="margin-top: 20px;">Close</button>
             </div>
@@ -354,7 +430,7 @@
 
         <footer>
             📅 Changes sync to everyone • Edits require password<br>
-            <span style="font-size: 0.7rem; color: #bbb;">Version 1.7.0</span>
+            <span style="font-size: 0.7rem; color: #bbb;">Version 1.8.0</span>
             <div id="lastEdited" style="font-size: 0.7rem; margin-top: 8px; color: #bbb;"></div>
             <br><br>
             <button class="edit-btn" onclick="showReleaseNotes()" style="background: #8b5cf6; width: auto; padding: 8px 20px;">📋 Version History</button>
@@ -380,6 +456,19 @@
         const database = firebase.database();
         
         const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+        
+        // Restaurant list for stats
+        const restaurants = ["Tims ☕", "Stay In 🍱", "Popeyes 🍗", "Subway 🥪", "Little Caesars 🍕", "Dollorama 🍬"];
+        
+        // Restaurant emoji mapping
+        const restaurantEmojis = {
+            "Tims ☕": "☕",
+            "Stay In 🍱": "🍱",
+            "Popeyes 🍗": "🍗",
+            "Subway 🥪": "🥪",
+            "Little Caesars 🍕": "🍕",
+            "Dollorama 🍬": "🍬"
+        };
         
         const defaultSchedule = {
             "Monday": {
@@ -407,20 +496,20 @@
                 distance: "0.6 km"
             },
             "Thursday": {
-                restaurant: "Jack Baseball ⚾",
-                cuisine: "Don't Eat Baseballs",
-                meetAt: "Neilson Park",
-                extra: "Sami And Thi Do whatever You Want",
+                restaurant: "Subway 🥪",
+                cuisine: "Sandwiches",
+                meetAt: "Library",
+                extra: "Get the sub of the day!",
                 price: "$",
-                distance: "5.2 km"
+                distance: "0.4 km"
             },
             "Friday": {
-                restaurant: "Dollorama 🍬",
-                cuisine: "Snacks",
+                restaurant: "Little Caesars 🍕",
+                cuisine: "Pizza",
                 meetAt: "Downstairs Bathroom",
-                extra: "U Can Get Subway Or Little Caesars If U Want",
+                extra: "Hot n Ready! 🍕",
                 price: "$",
-                distance: "2.1 km"
+                distance: "0.8 km"
             }
         };
         
@@ -442,6 +531,90 @@
             }
         }
         
+        // Restaurant Stats Functions
+        async function incrementVisitCount(restaurantName) {
+            const statsRef = database.ref('restaurantStats/' + restaurantName);
+            const snapshot = await statsRef.once('value');
+            const currentData = snapshot.val() || { visits: 0, lastVisitDate: null, streak: 0 };
+            
+            const today = new Date().toDateString();
+            
+            // Don't count twice on the same day
+            if (currentData.lastVisitDate === today) {
+                return;
+            }
+            
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayString = yesterday.toDateString();
+            
+            let newStreak = 1;
+            if (currentData.lastVisitDate === yesterdayString) {
+                newStreak = (currentData.streak || 0) + 1;
+            }
+            
+            await statsRef.set({
+                visits: (currentData.visits || 0) + 1,
+                lastVisitDate: today,
+                streak: newStreak
+            });
+            
+            loadRestaurantStats();
+        }
+        
+        async function loadRestaurantStats() {
+            const statsDiv = document.getElementById('statsContent');
+            statsDiv.innerHTML = '<div class="loading">Loading stats...</div>';
+            
+            const snapshot = await database.ref('restaurantStats').once('value');
+            const stats = snapshot.val() || {};
+            
+            let html = '';
+            for (const restaurant of restaurants) {
+                const data = stats[restaurant] || { visits: 0, streak: 0 };
+                const emoji = restaurantEmojis[restaurant] || "📍";
+                
+                let streakDisplay = '';
+                if (data.streak > 0) {
+                    const fireEmoji = data.streak >= 3 ? '🔥🔥' : (data.streak >= 2 ? '🔥' : '✨');
+                    streakDisplay = `<div class="stats-streak"><span class="streak-fire">${fireEmoji}</span> ${data.streak} day streak!</div>`;
+                } else {
+                    streakDisplay = `<div class="stats-streak">No streak yet</div>`;
+                }
+                
+                html += `
+                    <div class="stats-item">
+                        <div class="stats-left">
+                            <div class="stats-pin">📌 ${emoji}</div>
+                            <div class="stats-info">
+                                <div class="stats-name">${restaurant}</div>
+                                ${streakDisplay}
+                            </div>
+                        </div>
+                        <div class="stats-right">
+                            <div class="stats-visits">${data.visits} visit${data.visits !== 1 ? 's' : ''}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            statsDiv.innerHTML = html;
+        }
+        
+        async function resetAllStats() {
+            if (confirm("⚠️ Are you sure? This will reset ALL restaurant visit counts and streaks for everyone.")) {
+                for (const restaurant of restaurants) {
+                    await database.ref('restaurantStats/' + restaurant).set({
+                        visits: 0,
+                        streak: 0,
+                        lastVisitDate: null
+                    });
+                }
+                loadRestaurantStats();
+                alert("✅ All stats have been reset!");
+            }
+        }
+        
         function loadAndDisplay() {
             const today = new Date();
             const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
@@ -451,6 +624,7 @@
                 document.getElementById('weekend-content').style.display = 'block';
                 document.getElementById('weekday-content').style.display = 'none';
                 document.getElementById('day-badge').textContent = '🌙 WEEKEND MODE';
+                loadRestaurantStats();
                 return;
             }
             
@@ -459,12 +633,12 @@
             document.getElementById('loadingMsg').style.display = 'block';
             document.getElementById('planContent').style.display = 'none';
             
-            database.ref('schedule/' + dayName).once('value').then((snapshot) => {
+            database.ref('schedule/' + dayName).once('value').then(async (snapshot) => {
                 let plan = snapshot.val();
                 
                 if (!plan) {
                     plan = defaultSchedule[dayName];
-                    database.ref('schedule/' + dayName).set(plan);
+                    await database.ref('schedule/' + dayName).set(plan);
                 }
                 
                 document.getElementById('loadingMsg').style.display = 'none';
@@ -492,6 +666,10 @@
                 } else {
                     document.getElementById('extra-info').style.display = 'none';
                 }
+                
+                // Increment visit count for today's restaurant
+                await incrementVisitCount(plan.restaurant);
+                loadRestaurantStats();
             }).catch(error => {
                 console.error("Firebase error:", error);
                 document.getElementById('loadingMsg').innerHTML = '❌ Error loading data. Check console.';
@@ -639,6 +817,7 @@
         loadDarkModePreference();
         loadLastEdited();
         loadAndDisplay();
+        loadRestaurantStats();
     </script>
 </body>
 </html>
