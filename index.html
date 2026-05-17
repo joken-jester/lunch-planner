@@ -4,353 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🍱 Group Lunch Planner</title>
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            transition: background 0.3s ease;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .card {
-            background: white;
-            border-radius: 32px;
-            padding: 40px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .editor-card {
-            background: white;
-            border-radius: 32px;
-            padding: 30px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            display: none;
-        }
-
-        .editor-card.show {
-            display: block;
-        }
-
-        .day-badge {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 100px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .lunch-time-badge {
-            background: #e0e7ff;
-            padding: 10px;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            color: #4f46e5;
-            font-weight: bold;
-        }
-
-        .countdown-timer {
-            background: #fef3c7;
-            padding: 8px;
-            border-radius: 20px;
-            margin-top: 10px;
-            font-size: 0.85rem;
-            color: #d97706;
-            font-weight: bold;
-        }
-
-        .weekend-message {
-            background: #ffe0b2;
-            padding: 40px 20px;
-            border-radius: 20px;
-            margin: 25px 0;
-        }
-
-        .restaurant {
-            background: #f0f0ff;
-            padding: 20px;
-            border-radius: 20px;
-            margin: 25px 0;
-        }
-
-        .restaurant-name {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .meetup {
-            background: #fff8e7;
-            padding: 20px;
-            border-radius: 20px;
-            margin: 25px 0;
-        }
-
-        .meetup h3 {
-            color: #e67e22;
-            margin-bottom: 10px;
-        }
-
-        .meetup p {
-            font-size: 1.2rem;
-            font-weight: 500;
-        }
-
-        .extra-note {
-            background: #e8f5e9;
-            padding: 15px;
-            border-radius: 20px;
-            margin: 25px 0;
-            color: #2e7d32;
-        }
-
-        .edit-btn {
-            background: #4f46e5;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .edit-btn:hover {
-            background: #4338ca;
-        }
-
-        .day-editor {
-            border: 1px solid #ddd;
-            border-radius: 16px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-
-        .day-editor h3 {
-            margin-bottom: 10px;
-            color: #4f46e5;
-        }
-
-        .day-editor input, .day-editor textarea, .day-editor select {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-family: inherit;
-        }
-
-        .day-editor textarea {
-            resize: vertical;
-        }
-
-        .save-btn {
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .save-btn:hover {
-            background: #059669;
-        }
-
-        .close-btn {
-            background: #6b7280;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 40px;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 24px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-content input {
-            width: 100%;
-            padding: 12px;
-            margin: 20px 0;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .modal-content button {
-            background: #4f46e5;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 40px;
-            cursor: pointer;
-        }
-
-        .error-msg {
-            color: red;
-            font-size: 0.9rem;
-            margin-top: 10px;
-        }
-
-        .loading {
-            color: #666;
-            padding: 20px;
-        }
-
-        footer {
-            margin-top: 20px;
-            font-size: 0.8rem;
-            color: #aaa;
-            text-align: center;
-        }
-
-        .group-badge {
-            margin-top: 15px;
-            font-size: 0.8rem;
-            color: #888;
-        }
-
-        .version-item {
-            background: #f0f0ff;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-        }
-
-        /* Stats Panel Styles */
-        .stats-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #f0f0ff;
-            padding: 15px;
-            border-radius: 16px;
-            margin-bottom: 12px;
-            text-align: left;
-        }
-
-        .stats-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .stats-pin {
-            font-size: 2rem;
-            background: white;
-            padding: 10px;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            width: 55px;
-            height: 55px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .stats-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .stats-name {
-            font-weight: bold;
-            font-size: 1rem;
-        }
-
-        .stats-right {
-            text-align: right;
-        }
-
-        .stats-visits {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #4f46e5;
-        }
-
-        .stats-streak {
-            font-size: 0.7rem;
-            color: #e67e22;
-        }
-
-        .streak-fire {
-            font-size: 0.8rem;
-        }
-
-        .reset-stats-btn {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 25px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-
-        .reset-stats-btn:hover {
-            background: #dc2626;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; transition: background 0.3s ease; }
+        .container { max-width: 700px; margin: 0 auto; }
+        .card { background: white; border-radius: 32px; padding: 40px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center; margin-bottom: 20px; }
+        .editor-card { background: white; border-radius: 32px; padding: 30px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); display: none; }
+        .editor-card.show { display: block; }
+        .day-badge { display: inline-block; background: #667eea; color: white; padding: 8px 20px; border-radius: 100px; font-size: 14px; font-weight: 600; margin-bottom: 20px; }
+        h1 { font-size: 2rem; margin-bottom: 10px; color: #333; }
+        .lunch-time-badge { background: #e0e7ff; padding: 10px; border-radius: 20px; margin-bottom: 20px; color: #4f46e5; font-weight: bold; }
+        .weekend-message { background: #ffe0b2; padding: 40px 20px; border-radius: 20px; margin: 25px 0; }
+        .restaurant { background: #f0f0ff; padding: 20px; border-radius: 20px; margin: 25px 0; }
+        .restaurant-name { font-size: 2rem; font-weight: 700; color: #667eea; margin-bottom: 10px; }
+        .meetup { background: #fff8e7; padding: 20px; border-radius: 20px; margin: 25px 0; }
+        .meetup h3 { color: #e67e22; margin-bottom: 10px; }
+        .meetup p { font-size: 1.2rem; font-weight: 500; }
+        .extra-note { background: #e8f5e9; padding: 15px; border-radius: 20px; margin: 25px 0; color: #2e7d32; }
+        .edit-btn { background: #4f46e5; color: white; border: none; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .edit-btn:hover { background: #4338ca; }
+        .day-editor { border: 1px solid #ddd; border-radius: 16px; padding: 15px; margin-bottom: 15px; }
+        .day-editor h3 { margin-bottom: 10px; color: #4f46e5; }
+        .day-editor input, .day-editor textarea, .day-editor select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: inherit; }
+        .day-editor textarea { resize: vertical; }
+        .save-btn { background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; }
+        .save-btn:hover { background: #059669; }
+        .close-btn { background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; margin-bottom: 20px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; padding: 30px; border-radius: 24px; text-align: center; max-width: 400px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-content input { width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; }
+        .modal-content button { background: #4f46e5; color: white; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; }
+        .error-msg { color: red; font-size: 0.9rem; margin-top: 10px; }
+        .loading { color: #666; padding: 20px; }
+        footer { margin-top: 20px; font-size: 0.8rem; color: #aaa; text-align: center; }
+        .group-badge { margin-top: 15px; font-size: 0.8rem; color: #888; }
+        .version-item { background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px; }
+        .stats-item { display: flex; align-items: center; justify-content: space-between; background: #f0f0ff; padding: 15px; border-radius: 16px; margin-bottom: 12px; text-align: left; }
+        .stats-left { display: flex; align-items: center; gap: 15px; }
+        .stats-pin { font-size: 2rem; background: white; padding: 10px; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.1); width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; }
+        .stats-info { display: flex; flex-direction: column; }
+        .stats-name { font-weight: bold; font-size: 1rem; }
+        .stats-right { text-align: right; }
+        .stats-visits { font-size: 1.3rem; font-weight: bold; color: #4f46e5; }
+        .stats-streak { font-size: 0.7rem; color: #e67e22; }
+        .streak-fire { font-size: 0.8rem; }
+        .reset-stats-btn { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 25px; font-size: 0.75rem; cursor: pointer; margin-top: 15px; }
+        .reset-stats-btn:hover { background: #dc2626; }
     </style>
 </head>
 <body>
@@ -358,7 +60,6 @@
         <div class="card" id="displayCard">
             <div class="day-badge" id="day-badge">🍴 LUNCH PLAN</div>
             <div class="lunch-time-badge">⏰ 11:40 AM - 12:40 PM</div>
-            <div id="countdownDisplay" class="countdown-timer"></div>
             <h1>🍽️ Lunch Time!</h1>
             
             <div id="weekend-content" style="display: none;" class="weekend-message">
@@ -376,12 +77,10 @@
                         <div id="restaurant-price" style="margin-top: 8px; font-weight: bold;"></div>
                         <div id="restaurant-distance" style="margin-top: 5px; font-size: 0.8rem; color: #666;"></div>
                     </div>
-                    
                     <div class="meetup">
                         <h3>🤝 Meet at</h3>
                         <p id="meetup-location"></p>
                     </div>
-                    
                     <div id="extra-info" class="extra-note" style="display: none;"></div>
                 </div>
             </div>
@@ -393,12 +92,9 @@
             <div class="group-badge">🌐 Changes sync to everyone instantly!</div>
         </div>
 
-        <!-- Restaurant Stats Panel -->
         <div class="card" id="statsCard">
             <div class="day-badge" style="background: #10b981;">📊 RESTAURANT STATS</div>
-            <div id="statsContent">
-                <div class="loading">Loading stats...</div>
-            </div>
+            <div id="statsContent"><div class="loading">Loading stats...</div></div>
             <button class="reset-stats-btn" onclick="resetAllStats()">Reset All Stats</button>
         </div>
 
@@ -423,6 +119,7 @@
         <div class="modal" id="releaseModal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 20px;">📋 Version History</h3>
+                <div class="version-item"><strong>2.0.0 Visit Count at 11:40 AM</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.9.0 Auto-Refresh at 11:40 AM</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.8.0 Restaurant Stats Added</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.7.0 Version History Update</strong> - 5/16/26</div>
@@ -442,7 +139,7 @@
 
         <footer>
             📅 Changes sync to everyone • Edits require password<br>
-            <span style="font-size: 0.7rem; color: #bbb;">Version 1.9.0</span>
+            <span style="font-size: 0.7rem; color: #bbb;">Version 2.0.0</span>
             <div id="lastEdited" style="font-size: 0.7rem; margin-top: 8px; color: #bbb;"></div>
             <br><br>
             <button class="edit-btn" onclick="showReleaseNotes()" style="background: #8b5cf6; width: auto; padding: 8px 20px;">📋 Version History</button>
@@ -450,7 +147,6 @@
     </div>
 
     <script>
-        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyBuMR9Phku_45lH17Kyc5tgpB3k95OuUeU",
             authDomain: "lunch-6cabf.firebaseapp.com",
@@ -463,69 +159,25 @@
         
         const GROUP_PASSWORD = "popeyes";
         
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
         const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-        
-        // Restaurant list for stats
         const restaurants = ["Tims ☕", "Stay In 🍱", "Popeyes 🍗", "Subway 🥪", "Little Caesars 🍕", "Dollorama 🍬"];
         
-        // Restaurant emoji mapping
         const restaurantEmojis = {
-            "Tims ☕": "☕",
-            "Stay In 🍱": "🍱",
-            "Popeyes 🍗": "🍗",
-            "Subway 🥪": "🥪",
-            "Little Caesars 🍕": "🍕",
-            "Dollorama 🍬": "🍬"
+            "Tims ☕": "☕", "Stay In 🍱": "🍱", "Popeyes 🍗": "🍗",
+            "Subway 🥪": "🥪", "Little Caesars 🍕": "🍕", "Dollorama 🍬": "🍬"
         };
         
         const defaultSchedule = {
-            "Monday": {
-                restaurant: "Tims ☕",
-                cuisine: "Baked Goods And Coffee",
-                meetAt: "Library",
-                extra: "Hi",
-                price: "$",
-                distance: "0.35 km"
-            },
-            "Tuesday": {
-                restaurant: "Stay In 🍱",
-                cuisine: "Whatever You Bring",
-                meetAt: "Cafeteria",
-                extra: "Sami Ur Closest, Secure A Table",
-                price: "$",
-                distance: "0 km (in building)"
-            },
-            "Wednesday": {
-                restaurant: "Popeyes 🍗",
-                cuisine: "Chicken",
-                meetAt: "Library",
-                extra: "Ts Better Not Take 40 Mins Ts Time",
-                price: "$$",
-                distance: "0.6 km"
-            },
-            "Thursday": {
-                restaurant: "Subway 🥪",
-                cuisine: "Sandwiches",
-                meetAt: "Library",
-                extra: "Get the sub of the day!",
-                price: "$",
-                distance: "0.4 km"
-            },
-            "Friday": {
-                restaurant: "Little Caesars 🍕",
-                cuisine: "Pizza",
-                meetAt: "Downstairs Bathroom",
-                extra: "Hot n Ready! 🍕",
-                price: "$",
-                distance: "0.8 km"
-            }
+            "Monday": { restaurant: "Tims ☕", cuisine: "Baked Goods And Coffee", meetAt: "Library", extra: "Hi", price: "$", distance: "0.35 km" },
+            "Tuesday": { restaurant: "Stay In 🍱", cuisine: "Whatever You Bring", meetAt: "Cafeteria", extra: "Sami Ur Closest, Secure A Table", price: "$", distance: "0 km (in building)" },
+            "Wednesday": { restaurant: "Popeyes 🍗", cuisine: "Chicken", meetAt: "Library", extra: "Ts Better Not Take 40 Mins Ts Time", price: "$$", distance: "0.6 km" },
+            "Thursday": { restaurant: "Subway 🥪", cuisine: "Sandwiches", meetAt: "Library", extra: "Get the sub of the day!", price: "$", distance: "0.4 km" },
+            "Friday": { restaurant: "Little Caesars 🍕", cuisine: "Pizza", meetAt: "Downstairs Bathroom", extra: "Hot n Ready! 🍕", price: "$", distance: "0.8 km" }
         };
         
-        // Dark Mode Functions (with memory)
         function setDarkMode(isDark) {
             if (isDark) {
                 document.body.style.background = '#1a1a2e';
@@ -538,155 +190,94 @@
         
         function loadDarkModePreference() {
             const savedDarkMode = localStorage.getItem('darkMode');
-            if (savedDarkMode === 'true') {
-                document.body.style.background = '#1a1a2e';
-            }
+            if (savedDarkMode === 'true') document.body.style.background = '#1a1a2e';
         }
         
-        // Countdown to 11:40 AM Toronto time
-        function updateCountdown() {
-            // Get current time in Toronto
+        let visitAddedToday = false;
+        
+        async function addVisitAt1140() {
             const torontoNow = new Date().toLocaleString('en-US', { timeZone: 'America/Toronto' });
-            const nowToronto = new Date(torontoNow);
+            const now = new Date(torontoNow);
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentSecond = now.getSeconds();
             
-            const dayName = nowToronto.toLocaleDateString('en-US', { weekday: 'long' });
-            const isWeekend = (dayName === "Saturday" || dayName === "Sunday");
-            
-            if (isWeekend) {
-                document.getElementById('countdownDisplay').innerHTML = '🌿 Weekend mode — no lunch plan today!';
-                return;
+            if (currentHour === 11 && currentMinute === 40 && currentSecond >= 0 && currentSecond <= 5 && !visitAddedToday) {
+                const today = new Date();
+                const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
+                const isWeekend = (dayName === "Saturday" || dayName === "Sunday");
+                
+                if (!isWeekend) {
+                    const snapshot = await database.ref('schedule/' + dayName).once('value');
+                    let plan = snapshot.val();
+                    if (!plan) plan = defaultSchedule[dayName];
+                    
+                    await incrementVisitCount(plan.restaurant);
+                    visitAddedToday = true;
+                    console.log("✅ Visit added at 11:40 AM for:", plan.restaurant);
+                    loadRestaurantStats();
+                }
             }
             
-            const currentHour = nowToronto.getHours();
-            const currentMinute = nowToronto.getMinutes();
-            
-            // Check if current time is between 11:40 AM and 12:40 PM Toronto time
-            if ((currentHour === 11 && currentMinute >= 40) || (currentHour === 12 && currentMinute <= 40)) {
-                document.getElementById('countdownDisplay').innerHTML = '🍽️ Lunch time is NOW! 🍽️';
-                return;
+            // Reset the flag at midnight
+            if (currentHour === 0 && currentMinute === 0 && currentSecond === 0) {
+                visitAddedToday = false;
             }
-            
-            // Check if after 12:40 PM Toronto time
-            if (currentHour >= 13 || (currentHour === 12 && currentMinute > 40)) {
-                document.getElementById('countdownDisplay').innerHTML = '✅ Lunch is over! See you tomorrow.';
-                return;
-            }
-            
-            // Calculate time until lunch in Toronto
-            let targetTime = new Date(nowToronto);
-            targetTime.setHours(11, 40, 0, 0);
-            
-            // If it's past 11:40 already, target tomorrow
-            if (nowToronto > targetTime) {
-                targetTime.setDate(targetTime.getDate() + 1);
-            }
-            
-            const diff = targetTime - nowToronto;
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            
-            let countdownText = '';
-            if (hours > 0) {
-                countdownText = `⏰ Lunch in ${hours}h ${minutes}m ${seconds}s`;
-            } else {
-                countdownText = `⏰ Lunch in ${minutes}m ${seconds}s`;
-            }
-            
-            document.getElementById('countdownDisplay').innerHTML = countdownText;
         }
         
-        // Check if it's 11:40 AM Toronto time and refresh
         function checkAndRefreshAt1140() {
             const torontoNow = new Date().toLocaleString('en-US', { timeZone: 'America/Toronto' });
             const currentHour = new Date(torontoNow).getHours();
             const currentMinute = new Date(torontoNow).getMinutes();
             const currentSecond = new Date(torontoNow).getSeconds();
             
-            // Check if it's 11:40:00 AM Toronto time
             if (currentHour === 11 && currentMinute === 40 && currentSecond === 0) {
                 location.reload();
             }
         }
-
-        // Restaurant Stats Functions
+        
         async function incrementVisitCount(restaurantName) {
             const statsRef = database.ref('restaurantStats/' + restaurantName);
             const snapshot = await statsRef.once('value');
             const currentData = snapshot.val() || { visits: 0, lastVisitDate: null, streak: 0 };
-            
             const today = new Date().toDateString();
             
-            // Don't count twice on the same day
-            if (currentData.lastVisitDate === today) {
-                return;
-            }
+            if (currentData.lastVisitDate === today) return;
             
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
             const yesterdayString = yesterday.toDateString();
             
             let newStreak = 1;
-            if (currentData.lastVisitDate === yesterdayString) {
-                newStreak = (currentData.streak || 0) + 1;
-            }
+            if (currentData.lastVisitDate === yesterdayString) newStreak = (currentData.streak || 0) + 1;
             
             await statsRef.set({
                 visits: (currentData.visits || 0) + 1,
                 lastVisitDate: today,
                 streak: newStreak
             });
-            
             loadRestaurantStats();
         }
         
         async function loadRestaurantStats() {
             const statsDiv = document.getElementById('statsContent');
             statsDiv.innerHTML = '<div class="loading">Loading stats...</div>';
-            
             const snapshot = await database.ref('restaurantStats').once('value');
             const stats = snapshot.val() || {};
-            
             let html = '';
             for (const restaurant of restaurants) {
                 const data = stats[restaurant] || { visits: 0, streak: 0 };
                 const emoji = restaurantEmojis[restaurant] || "📍";
-                
-                let streakDisplay = '';
-                if (data.streak > 0) {
-                    const fireEmoji = data.streak >= 3 ? '🔥🔥' : (data.streak >= 2 ? '🔥' : '✨');
-                    streakDisplay = `<div class="stats-streak"><span class="streak-fire">${fireEmoji}</span> ${data.streak} day streak!</div>`;
-                } else {
-                    streakDisplay = `<div class="stats-streak">No streak yet</div>`;
-                }
-                
-                html += `
-                    <div class="stats-item">
-                        <div class="stats-left">
-                            <div class="stats-pin">📌 ${emoji}</div>
-                            <div class="stats-info">
-                                <div class="stats-name">${restaurant}</div>
-                                ${streakDisplay}
-                            </div>
-                        </div>
-                        <div class="stats-right">
-                            <div class="stats-visits">${data.visits} visit${data.visits !== 1 ? 's' : ''}</div>
-                        </div>
-                    </div>
-                `;
+                let streakDisplay = data.streak > 0 ? `<div class="stats-streak"><span class="streak-fire">${data.streak >= 3 ? '🔥🔥' : (data.streak >= 2 ? '🔥' : '✨')}</span> ${data.streak} day streak!</div>` : `<div class="stats-streak">No streak yet</div>`;
+                html += `<div class="stats-item"><div class="stats-left"><div class="stats-pin">📌 ${emoji}</div><div class="stats-info"><div class="stats-name">${restaurant}</div>${streakDisplay}</div></div><div class="stats-right"><div class="stats-visits">${data.visits} visit${data.visits !== 1 ? 's' : ''}</div></div></div>`;
             }
-            
             statsDiv.innerHTML = html;
         }
         
         async function resetAllStats() {
             if (confirm("⚠️ Are you sure? This will reset ALL restaurant visit counts and streaks for everyone.")) {
                 for (const restaurant of restaurants) {
-                    await database.ref('restaurantStats/' + restaurant).set({
-                        visits: 0,
-                        streak: 0,
-                        lastVisitDate: null
-                    });
+                    await database.ref('restaurantStats/' + restaurant).set({ visits: 0, streak: 0, lastVisitDate: null });
                 }
                 loadRestaurantStats();
                 alert("✅ All stats have been reset!");
@@ -713,7 +304,6 @@
             
             database.ref('schedule/' + dayName).once('value').then(async (snapshot) => {
                 let plan = snapshot.val();
-                
                 if (!plan) {
                     plan = defaultSchedule[dayName];
                     await database.ref('schedule/' + dayName).set(plan);
@@ -727,26 +317,17 @@
                 document.getElementById('meetup-location').textContent = plan.meetAt;
                 
                 const priceSymbol = plan.price || "$";
-                let priceDisplay = "";
-                if (priceSymbol === "$") priceDisplay = "💵 $ (Budget friendly)";
-                else if (priceSymbol === "$$") priceDisplay = "💰 $$ (Moderate)";
-                else if (priceSymbol === "$$$") priceDisplay = "💎 $$$ (Fancy)";
-                else priceDisplay = `💵 ${priceSymbol}`;
+                let priceDisplay = priceSymbol === "$" ? "💵 $ (Budget friendly)" : (priceSymbol === "$$" ? "💰 $$ (Moderate)" : (priceSymbol === "$$$" ? "💎 $$$ (Fancy)" : `💵 ${priceSymbol}`));
                 document.getElementById('restaurant-price').textContent = priceDisplay;
-                
-                const distance = plan.distance || "Unknown";
-                document.getElementById('restaurant-distance').innerHTML = `📏 Distance: ${distance}`;
+                document.getElementById('restaurant-distance').innerHTML = `📏 Distance: ${plan.distance || "Unknown"}`;
                 
                 if (plan.extra && plan.extra.trim() !== "") {
-                    const extraDiv = document.getElementById('extra-info');
-                    extraDiv.style.display = 'block';
-                    extraDiv.innerHTML = `✨ <strong>Extra:</strong> ${plan.extra}`;
+                    document.getElementById('extra-info').style.display = 'block';
+                    document.getElementById('extra-info').innerHTML = `✨ <strong>Extra:</strong> ${plan.extra}`;
                 } else {
                     document.getElementById('extra-info').style.display = 'none';
                 }
                 
-                // Increment visit count for today's restaurant
-                await incrementVisitCount(plan.restaurant);
                 loadRestaurantStats();
             }).catch(error => {
                 console.error("Firebase error:", error);
@@ -773,22 +354,16 @@
         async function showEditor() {
             document.getElementById('displayCard').style.display = 'none';
             document.getElementById('editorCard').classList.add('show');
-            
             const editorDiv = document.getElementById('editorFields');
             editorDiv.innerHTML = '<div class="loading">Loading current schedule...</div>';
-            
             const snapshot = await database.ref('schedule').once('value');
             const currentSchedule = snapshot.val() || {};
-            
             editorDiv.innerHTML = '';
-            
             for (const day of weekdays) {
                 const plan = currentSchedule[day] || defaultSchedule[day];
-                
                 const dayDiv = document.createElement('div');
                 dayDiv.className = 'day-editor';
-                dayDiv.innerHTML = `
-                    <h3>${day}</h3>
+                dayDiv.innerHTML = `<h3>${day}</h3>
                     <input type="text" id="${day}_restaurant" placeholder="Restaurant name" value="${escapeHtml(plan.restaurant || '')}">
                     <input type="text" id="${day}_cuisine" placeholder="Cuisine (optional)" value="${escapeHtml(plan.cuisine || '')}">
                     <input type="text" id="${day}_meetAt" placeholder="Where to meet" value="${escapeHtml(plan.meetAt || '')}">
@@ -798,8 +373,7 @@
                         <option value="$$$" ${plan.price === "$$$" ? "selected" : ""}>$$$ - Fancy</option>
                     </select>
                     <input type="text" id="${day}_distance" placeholder="Distance (e.g., 0.3 miles)" value="${escapeHtml(plan.distance || '')}">
-                    <textarea id="${day}_extra" placeholder="Extra notes / deals (optional)" rows="2">${escapeHtml(plan.extra || '')}</textarea>
-                `;
+                    <textarea id="${day}_extra" placeholder="Extra notes / deals (optional)" rows="2">${escapeHtml(plan.extra || '')}</textarea>`;
                 editorDiv.appendChild(dayDiv);
             }
         }
@@ -816,7 +390,6 @@
         
         async function saveSchedule() {
             const updates = {};
-            
             for (const day of weekdays) {
                 updates[day] = {
                     restaurant: document.getElementById(`${day}_restaurant`).value || "❓ Not set",
@@ -827,17 +400,14 @@
                     distance: document.getElementById(`${day}_distance`).value || ""
                 };
             }
-            
             const saveBtn = document.querySelector('.save-btn');
             const originalText = saveBtn.textContent;
             saveBtn.textContent = '💾 Saving...';
             saveBtn.disabled = true;
-            
             try {
                 for (const [day, plan] of Object.entries(updates)) {
                     await database.ref('schedule/' + day).set(plan);
                 }
-                
                 alert("✅ Schedule saved to cloud!");
                 updateLastEdited();
                 const now = new Date();
@@ -881,24 +451,13 @@
             document.getElementById('releaseModal').classList.add('show');
         }
         
-        // Event Listeners
         document.getElementById('darkModeBtn').addEventListener('click', function() { setDarkMode(true); });
         document.getElementById('lightModeBtn').addEventListener('click', function() { setDarkMode(false); });
+        document.getElementById('passwordModal').addEventListener('click', function(e) { if (e.target === this) this.classList.remove('show'); });
         
-        document.getElementById('passwordModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.remove('show');
-            }
-        });
-        
-        // Start countdown timer (updates every second)
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
-        
-        // Check every second if it's 11:40 AM
         setInterval(checkAndRefreshAt1140, 1000);
+        setInterval(addVisitAt1140, 1000);
         
-        // Load saved preferences
         loadDarkModePreference();
         loadLastEdited();
         loadAndDisplay();
