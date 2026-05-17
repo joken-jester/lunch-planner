@@ -76,6 +76,16 @@
             font-weight: bold;
         }
 
+        .countdown-timer {
+            background: #fef3c7;
+            padding: 8px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #d97706;
+            font-weight: bold;
+        }
+
         .weekend-message {
             background: #ffe0b2;
             padding: 40px 20px;
@@ -348,6 +358,7 @@
         <div class="card" id="displayCard">
             <div class="day-badge" id="day-badge">🍴 LUNCH PLAN</div>
             <div class="lunch-time-badge">⏰ 11:40 AM - 12:40 PM</div>
+            <div id="countdownDisplay" class="countdown-timer"></div>
             <h1>🍽️ Lunch Time!</h1>
             
             <div id="weekend-content" style="display: none;" class="weekend-message">
@@ -412,6 +423,7 @@
         <div class="modal" id="releaseModal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 20px;">📋 Version History</h3>
+                <div class="version-item"><strong>1.9.0 Auto-Refresh at 11:40 AM</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.8.0 Restaurant Stats Added</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.7.0 Version History Update</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.6.0 Dark Mode Update</strong> - 5/16/26</div>
@@ -430,7 +442,7 @@
 
         <footer>
             📅 Changes sync to everyone • Edits require password<br>
-            <span style="font-size: 0.7rem; color: #bbb;">Version 1.8.0</span>
+            <span style="font-size: 0.7rem; color: #bbb;">Version 1.9.0</span>
             <div id="lastEdited" style="font-size: 0.7rem; margin-top: 8px; color: #bbb;"></div>
             <br><br>
             <button class="edit-btn" onclick="showReleaseNotes()" style="background: #8b5cf6; width: auto; padding: 8px 20px;">📋 Version History</button>
@@ -531,6 +543,54 @@
             }
         }
         
+        // Countdown to 11:40 AM
+        function updateCountdown() {
+            const now = new Date();
+            const lunchTime = new Date();
+            lunchTime.setHours(11, 40, 0, 0);
+            
+            const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
+            const isWeekend = (dayName === "Saturday" || dayName === "Sunday");
+            
+            if (isWeekend) {
+                document.getElementById('countdownDisplay').innerHTML = '🌿 Weekend mode — no lunch plan today!';
+                return;
+            }
+            
+            if (now >= lunchTime) {
+                document.getElementById('countdownDisplay').innerHTML = '🍽️ Lunch time is NOW! 🍽️';
+                return;
+            }
+            
+            const diff = lunchTime - now;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            let countdownText = '';
+            if (hours > 0) {
+                countdownText = `⏰ Lunch in ${hours}h ${minutes}m ${seconds}s`;
+            } else {
+                countdownText = `⏰ Lunch in ${minutes}m ${seconds}s`;
+            }
+            
+            document.getElementById('countdownDisplay').innerHTML = countdownText;
+        }
+        
+        // Check if it's 11:40 AM and refresh
+        function checkAndRefreshAt1140() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentSecond = now.getSeconds();
+            
+            // Check if it's 11:40:00 AM
+            if (currentHour === 11 && currentMinute === 40 && currentSecond === 0) {
+                // Reload the page to refresh lunch plan
+                location.reload();
+            }
+        }
+        
         // Restaurant Stats Functions
         async function incrementVisitCount(restaurantName) {
             const statsRef = database.ref('restaurantStats/' + restaurantName);
@@ -615,7 +675,7 @@
             }
         }
         
-        function loadAndDisplay() {
+        async function loadAndDisplay() {
             const today = new Date();
             const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
             const isWeekend = (dayName === "Saturday" || dayName === "Sunday");
@@ -812,6 +872,13 @@
                 this.classList.remove('show');
             }
         });
+        
+        // Start countdown timer (updates every second)
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+        
+        // Check every second if it's 11:40 AM
+        setInterval(checkAndRefreshAt1140, 1000);
         
         // Load saved preferences
         loadDarkModePreference();
