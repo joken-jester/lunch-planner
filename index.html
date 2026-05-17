@@ -543,11 +543,14 @@
             }
         }
         
-        // Countdown to 11:40 AM
+                // Countdown to 11:40 AM
         function updateCountdown() {
             const now = new Date();
-            const lunchTime = new Date();
-            lunchTime.setHours(11, 40, 0, 0);
+            const lunchStartTime = new Date();
+            lunchStartTime.setHours(11, 40, 0, 0);
+            
+            const lunchEndTime = new Date();
+            lunchEndTime.setHours(12, 40, 0, 0);
             
             const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
             const isWeekend = (dayName === "Saturday" || dayName === "Sunday");
@@ -557,12 +560,17 @@
                 return;
             }
             
-            if (now >= lunchTime) {
+            if (now >= lunchStartTime && now <= lunchEndTime) {
                 document.getElementById('countdownDisplay').innerHTML = '🍽️ Lunch time is NOW! 🍽️';
                 return;
             }
             
-            const diff = lunchTime - now;
+            if (now > lunchEndTime) {
+                document.getElementById('countdownDisplay').innerHTML = '✅ Lunch is over! See you tomorrow.';
+                return;
+            }
+            
+            const diff = lunchStartTime - now;
             const hours = Math.floor(diff / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
