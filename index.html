@@ -119,9 +119,8 @@
         <div class="modal" id="releaseModal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 20px;">📋 Version History</h3>
-                 <div class="version-item"><strong>1.10.0 resturant Stats Updated</strong> - 5/17/26</div>
-                <div class="version-item"><strong>1.9.1 Visit Count Bug Patched</strong> - 5/16/26</div>
-                <div class="version-item"><strong>1.9.0 Auto-Refresh at 11:40 AM Added</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.9.0 resturant Stats Updated</strong> - 5/17/26</div>
+                <div class="version-item"><strong>1.8.1 Visit Count Bug Patched</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.8.0 Restaurant Stats Added</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.7.0 Version History Updated</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.6.0 Dark Mode Updated</strong> - 5/16/26</div>
@@ -140,7 +139,7 @@
 
         <footer>
             📅 Changes sync to everyone • Edits require password<br>
-            <span style="font-size: 0.7rem; color: #bbb;">Version 1.10.0</span>
+            <span style="font-size: 0.7rem; color: #bbb;">Version 1.9.0</span>
             <div id="lastEdited" style="font-size: 0.7rem; margin-top: 8px; color: #bbb;"></div>
             <br><br>
             <button class="edit-btn" onclick="showReleaseNotes()" style="background: #8b5cf6; width: auto; padding: 8px 20px;">📋 Version History</button>
@@ -456,7 +455,6 @@
         document.getElementById('lightModeBtn').addEventListener('click', function() { setDarkMode(false); });
         document.getElementById('passwordModal').addEventListener('click', function(e) { if (e.target === this) this.classList.remove('show'); });
         
-        setInterval(checkAndRefreshAt1140, 1000);
         setInterval(addVisitAt1140, 1000);
         
         loadDarkModePreference();
