@@ -224,32 +224,32 @@
                 visitAddedToday = false;
             }
         }
+
         
-        function checkAndRefreshAt1140() {
-            const torontoNow = new Date().toLocaleString('en-US', { timeZone: 'America/Toronto' });
-            const currentHour = new Date(torontoNow).getHours();
-            const currentMinute = new Date(torontoNow).getMinutes();
-            const currentSecond = new Date(torontoNow).getSeconds();
-            
-            if (currentHour === 11 && currentMinute === 40 && currentSecond === 0) {
-                location.reload();
-            }
-        }
-        
-        async function incrementVisitCount(restaurantName) {
+                async function incrementVisitCount(restaurantName) {
             const statsRef = database.ref('restaurantStats/' + restaurantName);
             const snapshot = await statsRef.once('value');
             const currentData = snapshot.val() || { visits: 0, lastVisitDate: null, streak: 0 };
             const today = new Date().toDateString();
             
+            // Don't count twice on the same day
             if (currentData.lastVisitDate === today) return;
             
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayString = yesterday.toDateString();
+            // Find the last weekday (skip Saturday and Sunday)
+            let lastWeekday = new Date();
+            lastWeekday.setDate(lastWeekday.getDate() - 1);
+            
+            // Keep going back until we find a weekday (Monday-Friday)
+            while (lastWeekday.getDay() === 0 || lastWeekday.getDay() === 6) {
+                lastWeekday.setDate(lastWeekday.getDate() - 1);
+            }
+            
+            const lastWeekdayString = lastWeekday.toDateString();
             
             let newStreak = 1;
-            if (currentData.lastVisitDate === yesterdayString) newStreak = (currentData.streak || 0) + 1;
+            if (currentData.lastVisitDate === lastWeekdayString) {
+                newStreak = (currentData.streak || 0) + 1;
+            }
             
             await statsRef.set({
                 visits: (currentData.visits || 0) + 1,
