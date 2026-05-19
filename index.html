@@ -32,8 +32,8 @@
             background: #1e1e2e;
         }
         
-        body.dark h1 {
-            color: #ffffff;
+        body.dark h1, body.dark h2, body.dark h3, body.dark p, body.dark span, body.dark div:not(.stats-pin):not(.day-badge):not(.lunch-time-badge) {
+            color: #f3f4f6;
         }
         
         body.dark .day-badge {
@@ -48,6 +48,9 @@
         
         body.dark .weekend-message {
             background: #2d2a1e;
+        }
+        
+        body.dark .weekend-message h2 {
             color: #fcd34d;
         }
         
@@ -61,6 +64,10 @@
         
         body.dark .restaurant-name {
             color: #a5b4fc;
+        }
+        
+        body.dark .restaurant div:not(.restaurant-name) {
+            color: #d1d5db !important;
         }
         
         body.dark .meetup {
@@ -95,6 +102,10 @@
         
         body.dark .day-editor h3 {
             color: #a5b4fc;
+        }
+        
+        body.dark .day-editor label {
+            color: #d1d5db;
         }
         
         body.dark .day-editor input,
@@ -211,6 +222,13 @@
         
         body.dark .stats-streak .streak-fire {
             color: #fbbf24;
+        }
+        
+        body.dark .meetup p,
+        body.dark .restaurant div,
+        body.dark .extra-note,
+        body.dark .loading {
+            color: inherit;
         }
         
         .container { max-width: 700px; margin: 0 auto; }
@@ -429,7 +447,6 @@
                 }
             }
             
-            // Reset the flag at midnight
             if (currentHour === 0 && currentMinute === 0 && currentSecond === 0) {
                 visitAddedToday = false;
             }
