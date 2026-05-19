@@ -46,6 +46,10 @@
             color: #a5b4fc;
         }
         
+        body.dark .preview-card {
+            background: #2a2a3e !important;
+        }
+        
         body.dark .weekend-message {
             background: #2d2a1e;
         }
@@ -238,6 +242,59 @@
         .day-badge { display: inline-block; background: #667eea; color: white; padding: 8px 20px; border-radius: 100px; font-size: 14px; font-weight: 600; margin-bottom: 20px; transition: all 0.3s ease; }
         h1 { font-size: 2rem; margin-bottom: 10px; color: #333; transition: color 0.3s ease; }
         .lunch-time-badge { background: #e0e7ff; padding: 10px; border-radius: 20px; margin-bottom: 20px; color: #4f46e5; font-weight: bold; transition: all 0.3s ease; }
+        
+        /* Preview Cards */
+        .preview-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .preview-card {
+            flex: 1;
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .preview-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+        .preview-restaurant {
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+        .preview-meetup {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+        .preview-empty {
+            color: #94a3b8;
+            font-style: italic;
+            font-size: 0.75rem;
+        }
+        
+        body.dark .preview-card {
+            background: #2a2a3e;
+        }
+        body.dark .preview-title {
+            color: #94a3b8;
+        }
+        body.dark .preview-restaurant {
+            color: #a5b4fc;
+        }
+        body.dark .preview-meetup {
+            color: #94a3b8;
+        }
+        body.dark .preview-empty {
+            color: #64748b;
+        }
+        
         .weekend-message { background: #ffe0b2; padding: 40px 20px; border-radius: 20px; margin: 25px 0; transition: all 0.3s ease; }
         .restaurant { background: #f0f0ff; padding: 20px; border-radius: 20px; margin: 25px 0; transition: all 0.3s ease; }
         .restaurant-name { font-size: 2rem; font-weight: 700; color: #667eea; margin-bottom: 10px; transition: color 0.3s ease; }
@@ -278,6 +335,11 @@
         #restaurant-type { color: #666; transition: color 0.3s ease; }
         #restaurant-distance { color: #666; transition: color 0.3s ease; }
         #lastEdited { transition: color 0.3s ease; }
+        
+        @media (max-width: 500px) {
+            .preview-restaurant { font-size: 0.8rem; }
+            .preview-meetup { font-size: 0.65rem; }
+        }
     </style>
 </head>
 <body>
@@ -317,6 +379,20 @@
             <div class="group-badge">🌐 Changes sync to everyone instantly!</div>
         </div>
 
+        <!-- Tomorrow & Yesterday Preview Section -->
+        <div class="preview-row" id="previewRow">
+            <div class="preview-card" id="yesterdayCard">
+                <div class="preview-title">📅 YESTERDAY</div>
+                <div class="preview-restaurant" id="yesterdayRestaurant">-</div>
+                <div class="preview-meetup" id="yesterdayMeetup">-</div>
+            </div>
+            <div class="preview-card" id="tomorrowCard">
+                <div class="preview-title">📅 TOMORROW</div>
+                <div class="preview-restaurant" id="tomorrowRestaurant">-</div>
+                <div class="preview-meetup" id="tomorrowMeetup">-</div>
+            </div>
+        </div>
+
         <div class="card" id="statsCard">
             <div class="day-badge" style="background: #10b981;">📊 RESTAURANT STATS</div>
             <div id="statsContent"><div class="loading">Loading stats...</div></div>
@@ -344,6 +420,7 @@
         <div class="modal" id="releaseModal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 20px;">📋 Version History</h3>
+                <div class="version-item"><strong>1.11.0 Next Day Viewing Added</strong> - 5/19/26</div>
                 <div class="version-item"><strong>1.10.0 Dark Mode Updated</strong> - 5/19/26</div>
                 <div class="version-item"><strong>1.9.0 Restaurant Stats Updated</strong> - 5/17/26</div>
                 <div class="version-item"><strong>1.8.1 Visit Count Bug Patched</strong> - 5/16/26</div>
@@ -365,7 +442,7 @@
 
         <footer>
             📅 Changes sync to everyone • Edits require password<br>
-            <span style="font-size: 0.7rem; color: #bbb;">Version 1.10.0</span>
+            <span style="font-size: 0.7rem; color: #bbb;">Version 1.11.0</span>
             <div id="lastEdited" style="font-size: 0.7rem; margin-top: 8px; color: #bbb;"></div>
             <br><br>
             <button class="edit-btn" onclick="showReleaseNotes()" style="background: #8b5cf6; width: auto; padding: 8px 20px;">📋 Version History</button>
@@ -422,6 +499,51 @@
         }
         
         let visitAddedToday = false;
+        
+        // Get day name offset (0 = today, -1 = yesterday, 1 = tomorrow)
+        function getDayName(offset) {
+            const date = new Date();
+            date.setDate(date.getDate() + offset);
+            return date.toLocaleDateString('en-US', { weekday: 'long' });
+        }
+        
+        // Check if a day is a weekend
+        function isWeekend(dayName) {
+            return dayName === "Saturday" || dayName === "Sunday";
+        }
+        
+        // Load preview for yesterday and tomorrow
+        async function loadPreviews() {
+            const yesterdayName = getDayName(-1);
+            const tomorrowName = getDayName(1);
+            
+            const yesterdayIsWeekend = isWeekend(yesterdayName);
+            const tomorrowIsWeekend = isWeekend(tomorrowName);
+            
+            // Load yesterday
+            if (yesterdayIsWeekend) {
+                document.getElementById('yesterdayRestaurant').innerHTML = '🌿 Weekend';
+                document.getElementById('yesterdayMeetup').innerHTML = 'No lunch plan';
+            } else {
+                const yesterdaySnapshot = await database.ref('schedule/' + yesterdayName).once('value');
+                let yesterdayPlan = yesterdaySnapshot.val();
+                if (!yesterdayPlan) yesterdayPlan = defaultSchedule[yesterdayName];
+                document.getElementById('yesterdayRestaurant').innerHTML = yesterdayPlan.restaurant;
+                document.getElementById('yesterdayMeetup').innerHTML = yesterdayPlan.meetAt;
+            }
+            
+            // Load tomorrow
+            if (tomorrowIsWeekend) {
+                document.getElementById('tomorrowRestaurant').innerHTML = '🌿 Weekend';
+                document.getElementById('tomorrowMeetup').innerHTML = 'No lunch plan';
+            } else {
+                const tomorrowSnapshot = await database.ref('schedule/' + tomorrowName).once('value');
+                let tomorrowPlan = tomorrowSnapshot.val();
+                if (!tomorrowPlan) tomorrowPlan = defaultSchedule[tomorrowName];
+                document.getElementById('tomorrowRestaurant').innerHTML = tomorrowPlan.restaurant;
+                document.getElementById('tomorrowMeetup').innerHTML = tomorrowPlan.meetAt;
+            }
+        }
         
         async function addVisitAt1140() {
             const torontoNow = new Date().toLocaleString('en-US', { timeZone: 'America/Toronto' });
@@ -518,6 +640,7 @@
                 document.getElementById('weekday-content').style.display = 'none';
                 document.getElementById('day-badge').textContent = '🌙 WEEKEND MODE';
                 loadRestaurantStats();
+                loadPreviews();
                 return;
             }
             
@@ -553,6 +676,7 @@
                 }
                 
                 loadRestaurantStats();
+                loadPreviews();
             }).catch(error => {
                 console.error("Firebase error:", error);
                 document.getElementById('loadingMsg').innerHTML = '❌ Error loading data. Check console.';
