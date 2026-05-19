@@ -20,7 +20,7 @@
         
         /* Dark Mode */
         body.dark {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
         }
         
         body.dark .card {
@@ -33,20 +33,25 @@
         }
         
         body.dark h1 {
-            color: #e0e0e0;
+            color: #ffffff;
         }
         
         body.dark .day-badge {
-            background: #4f46e5;
+            background: #6366f1;
+            color: #ffffff;
         }
         
         body.dark .lunch-time-badge {
             background: #2a2a3e;
-            color: #818cf8;
+            color: #a5b4fc;
         }
         
         body.dark .weekend-message {
             background: #2d2a1e;
+            color: #fcd34d;
+        }
+        
+        body.dark .weekend-message p {
             color: #e0e0e0;
         }
         
@@ -55,7 +60,7 @@
         }
         
         body.dark .restaurant-name {
-            color: #818cf8;
+            color: #a5b4fc;
         }
         
         body.dark .meetup {
@@ -63,36 +68,60 @@
         }
         
         body.dark .meetup h3 {
-            color: #f59e0b;
+            color: #fbbf24;
         }
         
         body.dark .meetup p {
-            color: #e0e0e0;
+            color: #f3f4f6;
         }
         
         body.dark .extra-note {
             background: #1e2a1e;
-            color: #4ade80;
+            color: #86efac;
         }
         
         body.dark .edit-btn {
-            background: #4f46e5;
+            background: #6366f1;
+            color: #ffffff;
+        }
+        
+        body.dark .edit-btn:hover {
+            background: #818cf8;
         }
         
         body.dark .day-editor {
-            border-color: #444;
+            border-color: #4a4a5a;
         }
         
         body.dark .day-editor h3 {
-            color: #818cf8;
+            color: #a5b4fc;
         }
         
         body.dark .day-editor input,
         body.dark .day-editor textarea,
         body.dark .day-editor select {
             background: #2a2a3e;
-            border-color: #444;
-            color: #e0e0e0;
+            border-color: #4a4a5a;
+            color: #f3f4f6;
+        }
+        
+        body.dark .day-editor input::placeholder,
+        body.dark .day-editor textarea::placeholder {
+            color: #9ca3af;
+        }
+        
+        body.dark .save-btn {
+            background: #10b981;
+            color: #ffffff;
+        }
+        
+        body.dark .save-btn:hover {
+            background: #34d399;
+        }
+        
+        body.dark .close-btn {
+            background: #6b7280;
+            color: #ffffff;
         }
         
         body.dark .modal-content {
@@ -100,17 +129,22 @@
         }
         
         body.dark .modal-content h3 {
-            color: #e0e0e0;
+            color: #ffffff;
         }
         
         body.dark .modal-content p {
-            color: #aaa;
+            color: #d1d5db;
         }
         
         body.dark .modal-content input {
             background: #2a2a3e;
-            border-color: #444;
-            color: #e0e0e0;
+            border-color: #4a4a5a;
+            color: #f3f4f6;
+        }
+        
+        body.dark .modal-content button {
+            background: #6366f1;
+            color: #ffffff;
         }
         
         body.dark .error-msg {
@@ -118,20 +152,20 @@
         }
         
         body.dark .loading {
-            color: #aaa;
+            color: #d1d5db;
         }
         
         body.dark footer {
-            color: #666;
+            color: #9ca3af;
         }
         
         body.dark .group-badge {
-            color: #777;
+            color: #9ca3af;
         }
         
         body.dark .version-item {
             background: #2a2a3e;
-            color: #e0e0e0;
+            color: #f3f4f6;
         }
         
         body.dark .stats-item {
@@ -139,7 +173,7 @@
         }
         
         body.dark .stats-name {
-            color: #e0e0e0;
+            color: #f3f4f6;
         }
         
         body.dark .stats-pin {
@@ -147,27 +181,36 @@
         }
         
         body.dark .stats-visits {
-            color: #818cf8;
+            color: #a5b4fc;
         }
         
         body.dark .stats-streak {
-            color: #f59e0b;
+            color: #fbbf24;
         }
         
         body.dark .reset-stats-btn {
             background: #dc2626;
+            color: #ffffff;
+        }
+        
+        body.dark .reset-stats-btn:hover {
+            background: #ef4444;
         }
         
         body.dark #restaurant-type {
-            color: #aaa !important;
+            color: #d1d5db !important;
         }
         
         body.dark #restaurant-distance {
-            color: #aaa !important;
+            color: #d1d5db !important;
         }
         
         body.dark #lastEdited {
-            color: #666 !important;
+            color: #9ca3af !important;
+        }
+        
+        body.dark .stats-streak .streak-fire {
+            color: #fbbf24;
         }
         
         .container { max-width: 700px; margin: 0 auto; }
@@ -283,7 +326,7 @@
         <div class="modal" id="releaseModal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 20px;">📋 Version History</h3>
-                <div class="version-item"><strong>1.10.0 Dark Mode 2nd Update</strong> - 5/19/26</div>
+                <div class="version-item"><strong>1.10.0 Full Dark Mode Update</strong> - 5/19/26</div>
                 <div class="version-item"><strong>1.9.0 Restaurant Stats Updated</strong> - 5/17/26</div>
                 <div class="version-item"><strong>1.8.1 Visit Count Bug Patched</strong> - 5/16/26</div>
                 <div class="version-item"><strong>1.8.0 Restaurant Stats Added</strong> - 5/16/26</div>
