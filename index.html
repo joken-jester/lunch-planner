@@ -243,6 +243,21 @@
         h1 { font-size: 2rem; margin-bottom: 10px; color: #333; transition: color 0.3s ease; }
         .lunch-time-badge { background: #e0e7ff; padding: 10px; border-radius: 20px; margin-bottom: 20px; color: #4f46e5; font-weight: bold; transition: all 0.3s ease; }
         
+        /* Special Lunch Badge */
+        .special-lunch-badge {
+            background: #fef3c7;
+            color: #d97706;
+            font-size: 0.7rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-left: 8px;
+        }
+        body.dark .special-lunch-badge {
+            background: #422006;
+            color: #fbbf24;
+        }
+        
         /* Preview Cards */
         .preview-row {
             display: flex;
@@ -273,6 +288,11 @@
             font-size: 0.7rem;
             color: #64748b;
         }
+        .preview-time {
+            font-size: 0.65rem;
+            color: #d97706;
+            margin-top: 4px;
+        }
         .preview-empty {
             color: #94a3b8;
             font-style: italic;
@@ -290,6 +310,9 @@
         }
         body.dark .preview-meetup {
             color: #94a3b8;
+        }
+        body.dark .preview-time {
+            color: #fbbf24;
         }
         body.dark .preview-empty {
             color: #64748b;
@@ -346,12 +369,12 @@
     <div class="container">
         <div class="card" id="displayCard">
             <div class="day-badge" id="day-badge">🍴 LUNCH PLAN</div>
-            <div class="lunch-time-badge">⏰ 11:40 AM - 12:40 PM</div>
+            <div class="lunch-time-badge" id="lunchTimeBadge">⏰ 11:40 AM - 12:40 PM</div>
             <h1>🍽️ Lunch Time!</h1>
             
             <div id="weekend-content" style="display: none;" class="weekend-message">
                 <h2>🌿 No Lunch Plan Today</h2>
-                <p>It's the weekend! 🎉<br>See you Monday at 11:40 AM!</p>
+                <p>It's the weekend! 🎉<br>See you Monday!</p>
             </div>
             
             <div id="weekday-content">
@@ -385,11 +408,13 @@
                 <div class="preview-title">📅 YESTERDAY</div>
                 <div class="preview-restaurant" id="yesterdayRestaurant">-</div>
                 <div class="preview-meetup" id="yesterdayMeetup">-</div>
+                <div class="preview-time" id="yesterdayTime"></div>
             </div>
             <div class="preview-card" id="tomorrowCard">
                 <div class="preview-title">📅 TOMORROW</div>
                 <div class="preview-restaurant" id="tomorrowRestaurant">-</div>
                 <div class="preview-meetup" id="tomorrowMeetup">-</div>
+                <div class="preview-time" id="tomorrowTime"></div>
             </div>
         </div>
 
@@ -420,6 +445,8 @@
         <div class="modal" id="releaseModal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 20px;">📋 Version History</h3>
+                <div class="version-item"><strong>1.12.1 Special Lunch Time & Visit Fix</strong> - 5/19/26</div>
+                <div class="version-item"><strong>1.12.0 Monthly Schedule Rules Added</strong> - 5/19/26</div>
                 <div class="version-item"><strong>1.11.0 Next Day Viewing Added</strong> - 5/19/26</div>
                 <div class="version-item"><strong>1.10.0 Dark Mode Updated</strong> - 5/19/26</div>
                 <div class="version-item"><strong>1.9.0 Restaurant Stats Updated</strong> - 5/17/26</div>
@@ -442,7 +469,7 @@
 
         <footer>
             📅 Changes sync to everyone • Edits require password<br>
-            <span style="font-size: 0.7rem; color: #bbb;">Version 1.11.0</span>
+            <span style="font-size: 0.7rem; color: #bbb;">Version 1.12.1</span>
             <div id="lastEdited" style="font-size: 0.7rem; margin-top: 8px; color: #bbb;"></div>
             <br><br>
             <button class="edit-btn" onclick="showReleaseNotes()" style="background: #8b5cf6; width: auto; padding: 8px 20px;">📋 Version History</button>
@@ -481,6 +508,51 @@
             "Friday": { restaurant: "Little Caesars 🍕", cuisine: "Pizza", meetAt: "Downstairs Bathroom", extra: "Hot n Ready! 🍕", price: "$", distance: "0.8 km" }
         };
         
+        // Function to check if a given Wednesday is one of the last two Wednesdays of the month
+        function isLastTwoWednesdays(date) {
+            // Get the day of week (0 = Sunday, 3 = Wednesday)
+            if (date.getDay() !== 3) return false;
+            
+            const year = date.getFullYear();
+            const month = date.getMonth();
+            
+            // Get all Wednesdays in this month
+            const wednesdays = [];
+            const tempDate = new Date(year, month, 1);
+            
+            while (tempDate.getMonth() === month) {
+                if (tempDate.getDay() === 3) { // Wednesday
+                    wednesdays.push(new Date(tempDate));
+                }
+                tempDate.setDate(tempDate.getDate() + 1);
+            }
+            
+            // Get the last two Wednesdays (works for 4 OR 5 Wednesdays)
+            const lastTwoWednesdays = wednesdays.slice(-2);
+            
+            // Check if current date is one of the last two Wednesdays
+            return lastTwoWednesdays.some(wed => wed.getDate() === date.getDate());
+        }
+        
+        // Get the lunch time display based on date
+        function getLunchTimeDisplay(date) {
+            // Check if it's one of the last two Wednesdays of the month
+            if (isLastTwoWednesdays(date)) {
+                return { start: "12:00 PM", end: "1:00 PM", isSpecial: true, triggerHour: 12, triggerMinute: 0 };
+            }
+            return { start: "11:40 AM", end: "12:40 PM", isSpecial: false, triggerHour: 11, triggerMinute: 40 };
+        }
+        
+        // Update the lunch time badge
+        function updateLunchTimeBadge(date) {
+            const lunchTime = getLunchTimeDisplay(date);
+            const badge = document.getElementById('lunchTimeBadge');
+            badge.innerHTML = `⏰ ${lunchTime.start} - ${lunchTime.end}`;
+            if (lunchTime.isSpecial) {
+                badge.innerHTML += ' <span class="special-lunch-badge">⭐ Special Late Lunch</span>';
+            }
+        }
+        
         function setDarkMode(isDark) {
             if (isDark) {
                 document.body.classList.add('dark');
@@ -507,15 +579,30 @@
             return date.toLocaleDateString('en-US', { weekday: 'long' });
         }
         
+        function getDateWithOffset(offset) {
+            const date = new Date();
+            date.setDate(date.getDate() + offset);
+            return date;
+        }
+        
         // Check if a day is a weekend
         function isWeekend(dayName) {
             return dayName === "Saturday" || dayName === "Sunday";
+        }
+        
+        // Get time display for a specific day (for preview cards)
+        function getPreviewTimeDisplay(date, dayName) {
+            if (isWeekend(dayName)) return '';
+            const lunchTime = getLunchTimeDisplay(date);
+            return `${lunchTime.start} - ${lunchTime.end}`;
         }
         
         // Load preview for yesterday and tomorrow
         async function loadPreviews() {
             const yesterdayName = getDayName(-1);
             const tomorrowName = getDayName(1);
+            const yesterdayDate = getDateWithOffset(-1);
+            const tomorrowDate = getDateWithOffset(1);
             
             const yesterdayIsWeekend = isWeekend(yesterdayName);
             const tomorrowIsWeekend = isWeekend(tomorrowName);
@@ -524,35 +611,48 @@
             if (yesterdayIsWeekend) {
                 document.getElementById('yesterdayRestaurant').innerHTML = '🌿 Weekend';
                 document.getElementById('yesterdayMeetup').innerHTML = 'No lunch plan';
+                document.getElementById('yesterdayTime').innerHTML = '';
             } else {
                 const yesterdaySnapshot = await database.ref('schedule/' + yesterdayName).once('value');
                 let yesterdayPlan = yesterdaySnapshot.val();
                 if (!yesterdayPlan) yesterdayPlan = defaultSchedule[yesterdayName];
                 document.getElementById('yesterdayRestaurant').innerHTML = yesterdayPlan.restaurant;
                 document.getElementById('yesterdayMeetup').innerHTML = yesterdayPlan.meetAt;
+                document.getElementById('yesterdayTime').innerHTML = getPreviewTimeDisplay(yesterdayDate, yesterdayName);
             }
             
             // Load tomorrow
             if (tomorrowIsWeekend) {
                 document.getElementById('tomorrowRestaurant').innerHTML = '🌿 Weekend';
                 document.getElementById('tomorrowMeetup').innerHTML = 'No lunch plan';
+                document.getElementById('tomorrowTime').innerHTML = '';
             } else {
                 const tomorrowSnapshot = await database.ref('schedule/' + tomorrowName).once('value');
                 let tomorrowPlan = tomorrowSnapshot.val();
                 if (!tomorrowPlan) tomorrowPlan = defaultSchedule[tomorrowName];
                 document.getElementById('tomorrowRestaurant').innerHTML = tomorrowPlan.restaurant;
                 document.getElementById('tomorrowMeetup').innerHTML = tomorrowPlan.meetAt;
+                document.getElementById('tomorrowTime').innerHTML = getPreviewTimeDisplay(tomorrowDate, tomorrowName);
             }
         }
         
         async function addVisitAt1140() {
             const torontoNow = new Date().toLocaleString('en-US', { timeZone: 'America/Toronto' });
             const now = new Date(torontoNow);
+            
+            // Get today's lunch time (could be special)
+            const todayLunchTime = getLunchTimeDisplay(now);
+            
             const currentHour = now.getHours();
             const currentMinute = now.getMinutes();
             const currentSecond = now.getSeconds();
             
-            if (currentHour === 11 && currentMinute === 40 && currentSecond >= 0 && currentSecond <= 5 && !visitAddedToday) {
+            // Check if it's the trigger time for today (either 11:40 AM or 12:00 PM)
+            if (currentHour === todayLunchTime.triggerHour && 
+                currentMinute === todayLunchTime.triggerMinute && 
+                currentSecond >= 0 && currentSecond <= 5 && 
+                !visitAddedToday) {
+                
                 const today = new Date();
                 const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
                 const isWeekend = (dayName === "Saturday" || dayName === "Sunday");
@@ -564,7 +664,7 @@
                     
                     await incrementVisitCount(plan.restaurant);
                     visitAddedToday = true;
-                    console.log("✅ Visit added at 11:40 AM for:", plan.restaurant);
+                    console.log("✅ Visit added at", todayLunchTime.start, "for:", plan.restaurant);
                     loadRestaurantStats();
                 }
             }
@@ -573,7 +673,6 @@
                 visitAddedToday = false;
             }
         }
-
         
         async function incrementVisitCount(restaurantName) {
             const statsRef = database.ref('restaurantStats/' + restaurantName);
@@ -634,6 +733,9 @@
             const today = new Date();
             const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
             const isWeekend = (dayName === "Saturday" || dayName === "Sunday");
+            
+            // Update the lunch time badge based on today's date
+            updateLunchTimeBadge(today);
             
             if (isWeekend) {
                 document.getElementById('weekend-content').style.display = 'block';
