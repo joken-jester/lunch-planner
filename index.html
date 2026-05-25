@@ -445,22 +445,23 @@
         <div class="modal" id="releaseModal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 20px;">📋 Version History</h3>
-                <div class="version-item"><strong>0.11.1 Stats Bug Patched</strong> - 5/20/26</div>
-                <div class="version-item"><strong>0.11.0 Monthly Schedule Rules Added</strong> - 5/19/26</div>
-                <div class="version-item"><strong>0.10.0 Next Day Viewing Added</strong> - 5/19/26</div>
-                <div class="version-item"><strong>0.9.0 Full Dark Mode Update</strong> - 5/19/26</div>
-                <div class="version-item"><strong>0.8.0 Restaurant Stats Updated</strong> - 5/17/26</div>
-                <div class="version-item"><strong>0.7.1 Visit Count Bug Patched</strong> - 5/16/26</div>
-                <div class="version-item"><strong>0.7.0 Restaurant Stats Added</strong> - 5/16/26</div>
-                <div class="version-item"><strong>0.6.0 Dark Mode Updated</strong> - 5/16/26</div>
-                <div class="version-item"><strong>0.5.1 Loading Bug Patched</strong> - 5/16/26</div>
-                <div class="version-item"><strong>0.5.0 Distance Added</strong> - 5/16/26</div>
-                <div class="version-item"><strong>0.4.0 Price Added</strong> - 5/16/26</div>
-                <div class="version-item"><strong>0.3.0 Version History Added</strong> - 5/16/26</div>
-                <div class="version-item"><strong>0.2.1 Editing Schedule Bug Patched</strong> - 5/16/26</div>
-                <div class="version-item"><strong>0.2.0 Last Updated Date Added</strong> - 5/16/26</div>
-                <div class="version-item"><strong>0.1.1 Saving Bug Patched</strong> - 5/15/26</div>
-                <div class="version-item"><strong>0.1.0 Dark-Light Mode Added</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.13.0 New Restaurants Added</strong> - 5/25/26</div>
+                <div class="version-item"><strong>1.12.0 Monthly Schedule Rules Added</strong> - 5/19/26</div>
+                <div class="version-item"><strong>1.11.0 Next Day Viewing Added</strong> - 5/19/26</div>
+                <div class="version-item"><strong>1.10.0 Dark Mode Updated</strong> - 5/19/26</div>
+                <div class="version-item"><strong>1.9.0 Restaurant Stats Updated</strong> - 5/17/26</div>
+                <div class="version-item"><strong>1.8.1 Visit Count Bug Patched</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.8.0 Restaurant Stats Added</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.7.0 Version History Updated</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.6.0 Dark-Light Mode Updated</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.5.1 Loading Bug Patched</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.5.0 Distance Added</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.4.0 Price Added</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.3.0 Version History Added</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.2.1 Editing Schedule Bug Patched</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.2.0 Last Updated Date Added</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.1.0 Dark-Light Mode Added</strong> - 5/16/26</div>
+                <div class="version-item"><strong>1.0.1 Saving Bug Patched</strong> - 5/15/26</div>
                 <div class="version-item"><strong>1.0.0 Release</strong> - 5/14/26</div>
                 <button onclick="document.getElementById('releaseModal').classList.remove('show')" style="margin-top: 20px;">Close</button>
             </div>
@@ -468,7 +469,7 @@
 
         <footer>
             📅 Changes sync to everyone • Edits require password<br>
-            <span style="font-size: 0.7rem; color: #bbb;">Version 0.11.1</span>
+            <span style="font-size: 0.7rem; color: #bbb;">Version 1.13.0</span>
             <div id="lastEdited" style="font-size: 0.7rem; margin-top: 8px; color: #bbb;"></div>
             <br><br>
             <button class="edit-btn" onclick="showReleaseNotes()" style="background: #8b5cf6; width: auto; padding: 8px 20px;">📋 Version History</button>
@@ -492,11 +493,12 @@
         const database = firebase.database();
         
         const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-        const restaurants = ["Tims ☕", "Stay In 🍱", "Popeyes 🍗", "Subway 🥪", "Little Caesars 🍕", "Dollorama 🍬"];
+        const restaurants = ["Tims ☕", "Stay In 🍱", "Popeyes 🍗", "Subway 🥪", "Little Caesars 🍕", "Dollorama 🍬", "McDonald's 🍟", "Wendy's 🍔"];
         
         const restaurantEmojis = {
             "Tims ☕": "☕", "Stay In 🍱": "🍱", "Popeyes 🍗": "🍗",
-            "Subway 🥪": "🥪", "Little Caesars 🍕": "🍕", "Dollorama 🍬": "🍬"
+            "Subway 🥪": "🥪", "Little Caesars 🍕": "🍕", "Dollorama 🍬": "🍬",
+            "McDonald's 🍟": "🍟", "Wendy's 🍔": "🍔"
         };
         
         const defaultSchedule = {
@@ -646,19 +648,11 @@
             const currentMinute = now.getMinutes();
             const currentSecond = now.getSeconds();
             
-            // Debug log to see what's happening (remove after testing)
-            console.log("Current time:", currentHour + ":" + currentMinute + ":" + currentSecond);
-            console.log("Trigger time:", todayLunchTime.triggerHour + ":" + todayLunchTime.triggerMinute + ":00");
-            console.log("Is special?", todayLunchTime.isSpecial);
-            console.log("Visit already added today?", visitAddedToday);
-            
             // Check if it's the trigger time for today (either 11:40 AM or 12:00 PM)
             if (currentHour === todayLunchTime.triggerHour && 
                 currentMinute === todayLunchTime.triggerMinute && 
                 currentSecond >= 0 && currentSecond <= 5 && 
                 !visitAddedToday) {
-                
-                console.log("✅ TRIGGER MATCHED! Adding visit...");
                 
                 const today = new Date();
                 const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
@@ -676,11 +670,7 @@
                 }
             }
             
-            // Reset the flag at midnight
             if (currentHour === 0 && currentMinute === 0 && currentSecond === 0) {
-                if (visitAddedToday) {
-                    console.log("🕐 Midnight - reset visitAddedToday flag");
-                }
                 visitAddedToday = false;
             }
         }
