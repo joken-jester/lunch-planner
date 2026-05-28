@@ -8,233 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        /* Light Mode (default) */
-        body {
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-        
-        /* Dark Mode */
-        body.dark {
-            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
-        }
-        
-        body.dark .card {
-            background: #1e1e2e;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-        }
-        
-        body.dark .editor-card {
-            background: #1e1e2e;
-        }
-        
-        body.dark h1, body.dark h2, body.dark h3, body.dark p, body.dark span, body.dark div:not(.stats-pin):not(.day-badge):not(.lunch-time-badge) {
-            color: #f3f4f6;
-        }
-        
-        body.dark .day-badge {
-            background: #6366f1;
-            color: #ffffff;
-        }
-        
-        body.dark .lunch-time-badge {
-            background: #2a2a3e;
-            color: #a5b4fc;
-        }
-        
-        body.dark .preview-card {
-            background: #2a2a3e !important;
-        }
-        
-        body.dark .weekend-message {
-            background: #2d2a1e;
-        }
-        
-        body.dark .weekend-message h2 {
-            color: #fcd34d;
-        }
-        
-        body.dark .weekend-message p {
-            color: #e0e0e0;
-        }
-        
-        body.dark .restaurant {
-            background: #2a2a3e;
-        }
-        
-        body.dark .restaurant-name {
-            color: #a5b4fc;
-        }
-        
-        body.dark .restaurant div:not(.restaurant-name) {
-            color: #d1d5db !important;
-        }
-        
-        body.dark .meetup {
-            background: #2d2a1e;
-        }
-        
-        body.dark .meetup h3 {
-            color: #fbbf24;
-        }
-        
-        body.dark .meetup p {
-            color: #f3f4f6;
-        }
-        
-        body.dark .extra-note {
-            background: #1e2a1e;
-            color: #86efac;
-        }
-        
-        body.dark .edit-btn {
-            background: #6366f1;
-            color: #ffffff;
-        }
-        
-        body.dark .edit-btn:hover {
-            background: #818cf8;
-        }
-        
-        body.dark .day-editor {
-            border-color: #4a4a5a;
-        }
-        
-        body.dark .day-editor h3 {
-            color: #a5b4fc;
-        }
-        
-        body.dark .day-editor label {
-            color: #d1d5db;
-        }
-        
-        body.dark .day-editor input,
-        body.dark .day-editor textarea,
-        body.dark .day-editor select {
-            background: #2a2a3e;
-            border-color: #4a4a5a;
-            color: #f3f4f6;
-        }
-        
-        body.dark .day-editor input::placeholder,
-        body.dark .day-editor textarea::placeholder {
-            color: #9ca3af;
-        }
-        
-        body.dark .save-btn {
-            background: #10b981;
-            color: #ffffff;
-        }
-        
-        body.dark .save-btn:hover {
-            background: #34d399;
-        }
-        
-        body.dark .close-btn {
-            background: #6b7280;
-            color: #ffffff;
-        }
-        
-        body.dark .modal-content {
-            background: #1e1e2e;
-        }
-        
-        body.dark .modal-content h3 {
-            color: #ffffff;
-        }
-        
-        body.dark .modal-content p {
-            color: #d1d5db;
-        }
-        
-        body.dark .modal-content input {
-            background: #2a2a3e;
-            border-color: #4a4a5a;
-            color: #f3f4f6;
-        }
-        
-        body.dark .modal-content button {
-            background: #6366f1;
-            color: #ffffff;
-        }
-        
-        body.dark .error-msg {
-            color: #f87171;
-        }
-        
-        body.dark .loading {
-            color: #d1d5db;
-        }
-        
-        body.dark footer {
-            color: #9ca3af;
-        }
-        
-        body.dark .group-badge {
-            color: #9ca3af;
-        }
-        
-        body.dark .version-item {
-            background: #2a2a3e;
-            color: #f3f4f6;
-        }
-        
-        body.dark .stats-item {
-            background: #2a2a3e;
-        }
-        
-        body.dark .stats-name {
-            color: #f3f4f6;
-        }
-        
-        body.dark .stats-pin {
-            background: #1e1e2e;
-        }
-        
-        body.dark .stats-visits {
-            color: #a5b4fc;
-        }
-        
-        body.dark .stats-streak {
-            color: #fbbf24;
-        }
-        
-        body.dark .reset-stats-btn {
-            background: #dc2626;
-            color: #ffffff;
-        }
-        
-        body.dark .reset-stats-btn:hover {
-            background: #ef4444;
-        }
-        
-        body.dark #restaurant-type {
-            color: #d1d5db !important;
-        }
-        
-        body.dark #restaurant-distance {
-            color: #d1d5db !important;
-        }
-        
-        body.dark #lastEdited {
-            color: #9ca3af !important;
-        }
-        
-        body.dark .stats-streak .streak-fire {
-            color: #fbbf24;
-        }
-        
-        body.dark .meetup p,
-        body.dark .restaurant div,
-        body.dark .extra-note,
-        body.dark .loading {
-            color: inherit;
-        }
-        
+        body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; transition: all 0.3s ease; }
         .container { max-width: 700px; margin: 0 auto; }
         .card { background: white; border-radius: 32px; padding: 40px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center; margin-bottom: 20px; transition: all 0.3s ease; }
         .editor-card { background: white; border-radius: 32px; padding: 30px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); display: none; transition: all 0.3s ease; }
@@ -243,80 +17,55 @@
         h1 { font-size: 2rem; margin-bottom: 10px; color: #333; transition: color 0.3s ease; }
         .lunch-time-badge { background: #e0e7ff; padding: 10px; border-radius: 20px; margin-bottom: 20px; color: #4f46e5; font-weight: bold; transition: all 0.3s ease; }
         
-        /* Special Lunch Badge */
-        .special-lunch-badge {
-            background: #fef3c7;
-            color: #d97706;
-            font-size: 0.7rem;
-            padding: 4px 12px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-left: 8px;
-        }
-        body.dark .special-lunch-badge {
-            background: #422006;
-            color: #fbbf24;
-        }
+        /* Dark Mode */
+        body.dark { background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%); }
+        body.dark .card { background: #1e1e2e; }
+        body.dark .editor-card { background: #1e1e2e; }
+        body.dark h1, body.dark h2, body.dark h3, body.dark p, body.dark span { color: #f3f4f6; }
+        body.dark .day-badge { background: #6366f1; }
+        body.dark .lunch-time-badge { background: #2a2a3e; color: #a5b4fc; }
+        body.dark .preview-card { background: #2a2a3e !important; }
+        body.dark .weekend-message { background: #2d2a1e; }
+        body.dark .restaurant { background: #2a2a3e; }
+        body.dark .restaurant-name { color: #a5b4fc; }
+        body.dark .meetup { background: #2d2a1e; }
+        body.dark .meetup h3 { color: #fbbf24; }
+        body.dark .meetup p { color: #f3f4f6; }
+        body.dark .extra-note { background: #1e2a1e; color: #86efac; }
+        body.dark .edit-btn { background: #6366f1; color: white; }
+        body.dark .day-editor { border-color: #4a4a5a; }
+        body.dark .day-editor input, body.dark .day-editor textarea, body.dark .day-editor select { background: #2a2a3e; border-color: #4a4a5a; color: #f3f4f6; }
+        body.dark .modal-content { background: #1e1e2e; }
+        body.dark .modal-content h3 { color: white; }
+        body.dark .modal-content p { color: #d1d5db; }
+        body.dark .modal-content input { background: #2a2a3e; border-color: #4a4a5a; color: #f3f4f6; }
+        body.dark .error-msg { color: #f87171; }
+        body.dark .loading { color: #d1d5db; }
+        body.dark footer { color: #9ca3af; }
+        body.dark .group-badge { color: #9ca3af; }
+        body.dark .version-item { background: #2a2a3e; color: #f3f4f6; }
+        body.dark .stats-item { background: #2a2a3e; }
+        body.dark .stats-name { color: #f3f4f6; }
+        body.dark .stats-pin { background: #1e1e2e; }
+        body.dark .stats-visits { color: #a5b4fc; }
+        body.dark .stats-streak { color: #fbbf24; }
+        body.dark .reset-stats-btn { background: #dc2626; color: white; }
+        body.dark .stats-btn { box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
         
-        /* Preview Cards */
-        .preview-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .preview-card {
-            flex: 1;
-            background: #f8fafc;
-            border-radius: 24px;
-            padding: 15px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        .preview-title {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #64748b;
-            margin-bottom: 8px;
-        }
-        .preview-restaurant {
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin-bottom: 4px;
-        }
-        .preview-meetup {
-            font-size: 0.7rem;
-            color: #64748b;
-        }
-        .preview-time {
-            font-size: 0.65rem;
-            color: #d97706;
-            margin-top: 4px;
-        }
-        .preview-empty {
-            color: #94a3b8;
-            font-style: italic;
-            font-size: 0.75rem;
-        }
+        .special-lunch-badge { background: #fef3c7; color: #d97706; font-size: 0.7rem; padding: 4px 12px; border-radius: 20px; display: inline-block; margin-left: 8px; }
+        body.dark .special-lunch-badge { background: #422006; color: #fbbf24; }
         
-        body.dark .preview-card {
-            background: #2a2a3e;
-        }
-        body.dark .preview-title {
-            color: #94a3b8;
-        }
-        body.dark .preview-restaurant {
-            color: #a5b4fc;
-        }
-        body.dark .preview-meetup {
-            color: #94a3b8;
-        }
-        body.dark .preview-time {
-            color: #fbbf24;
-        }
-        body.dark .preview-empty {
-            color: #64748b;
-        }
+        .preview-row { display: flex; gap: 15px; margin-bottom: 20px; }
+        .preview-card { flex: 1; background: #f8fafc; border-radius: 24px; padding: 15px; text-align: center; transition: all 0.3s ease; }
+        .preview-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin-bottom: 8px; }
+        .preview-restaurant { font-weight: bold; font-size: 0.9rem; margin-bottom: 4px; }
+        .preview-meetup { font-size: 0.7rem; color: #64748b; }
+        .preview-time { font-size: 0.65rem; color: #d97706; margin-top: 4px; }
+        body.dark .preview-card { background: #2a2a3e; }
+        body.dark .preview-title { color: #94a3b8; }
+        body.dark .preview-restaurant { color: #a5b4fc; }
+        body.dark .preview-meetup { color: #94a3b8; }
+        body.dark .preview-time { color: #fbbf24; }
         
         .weekend-message { background: #ffe0b2; padding: 40px 20px; border-radius: 20px; margin: 25px 0; transition: all 0.3s ease; }
         .restaurant { background: #f0f0ff; padding: 20px; border-radius: 20px; margin: 25px 0; transition: all 0.3s ease; }
@@ -330,7 +79,6 @@
         .day-editor { border: 1px solid #ddd; border-radius: 16px; padding: 15px; margin-bottom: 15px; transition: all 0.3s ease; }
         .day-editor h3 { margin-bottom: 10px; color: #4f46e5; transition: color 0.3s ease; }
         .day-editor input, .day-editor textarea, .day-editor select { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: inherit; transition: all 0.3s ease; }
-        .day-editor textarea { resize: vertical; }
         .save-btn { background: #10b981; color: white; border: none; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; transition: all 0.3s ease; }
         .save-btn:hover { background: #059669; }
         .close-btn { background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; margin-bottom: 20px; transition: all 0.3s ease; }
@@ -344,15 +92,23 @@
         footer { margin-top: 20px; font-size: 0.8rem; color: #aaa; text-align: center; transition: color 0.3s ease; }
         .group-badge { margin-top: 15px; font-size: 0.8rem; color: #888; transition: color 0.3s ease; }
         .version-item { background: #f0f0ff; padding: 12px; border-radius: 8px; margin-bottom: 8px; transition: all 0.3s ease; }
+        
+        /* Stats Panel Styles with Buttons */
         .stats-item { display: flex; align-items: center; justify-content: space-between; background: #f0f0ff; padding: 15px; border-radius: 16px; margin-bottom: 12px; text-align: left; transition: all 0.3s ease; }
         .stats-left { display: flex; align-items: center; gap: 15px; }
         .stats-pin { font-size: 2rem; background: white; padding: 10px; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.1); width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
         .stats-info { display: flex; flex-direction: column; }
         .stats-name { font-weight: bold; font-size: 1rem; transition: color 0.3s ease; }
-        .stats-right { text-align: right; }
-        .stats-visits { font-size: 1.3rem; font-weight: bold; color: #4f46e5; transition: color 0.3s ease; }
         .stats-streak { font-size: 0.7rem; color: #e67e22; transition: color 0.3s ease; }
         .streak-fire { font-size: 0.8rem; }
+        .stats-controls { display: flex; align-items: center; gap: 8px; }
+        .stats-btn { background: #4f46e5; color: white; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 1.2rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .stats-btn.minus { background: #ef4444; }
+        .stats-btn.minus:hover { background: #dc2626; }
+        .stats-btn.plus { background: #10b981; }
+        .stats-btn.plus:hover { background: #059669; }
+        .stats-btn:active { transform: scale(0.95); }
+        .stats-visits { font-size: 1.3rem; font-weight: bold; color: #4f46e5; min-width: 50px; text-align: center; transition: color 0.3s ease; }
         .reset-stats-btn { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 25px; font-size: 0.75rem; cursor: pointer; margin-top: 15px; transition: all 0.3s ease; }
         .reset-stats-btn:hover { background: #dc2626; }
         #restaurant-type { color: #666; transition: color 0.3s ease; }
@@ -362,6 +118,8 @@
         @media (max-width: 500px) {
             .preview-restaurant { font-size: 0.8rem; }
             .preview-meetup { font-size: 0.65rem; }
+            .stats-btn { width: 28px; height: 28px; font-size: 1rem; }
+            .stats-visits { font-size: 1.1rem; min-width: 40px; }
         }
     </style>
 </head>
@@ -402,7 +160,6 @@
             <div class="group-badge">🌐 Changes sync to everyone instantly!</div>
         </div>
 
-        <!-- Tomorrow & Yesterday Preview Section -->
         <div class="preview-row" id="previewRow">
             <div class="preview-card" id="yesterdayCard">
                 <div class="preview-title">📅 YESTERDAY</div>
@@ -445,8 +202,8 @@
         <div class="modal" id="releaseModal">
             <div class="modal-content">
                 <h3 style="margin-bottom: 20px;">📋 Version History</h3>
-                <div class="version-item"><strong>1.14.0 Resturant Stats Updated</strong> - 5/27/26</div>
-                <div class="version-item"><strong>1.13.0 New Restaurants Added</strong> - 5/25/26</div>
+                <div class="version-item"><strong>1.14.0 Restaurant Stats Updated</strong> - 5/27/26</div>
+                <div class="version-item"><strong>1.13.0 New Restaurants Added</strong> - 5/27/26</div>
                 <div class="version-item"><strong>1.12.0 Monthly Schedule Rules Added</strong> - 5/19/26</div>
                 <div class="version-item"><strong>1.11.0 Next Day Viewing Added</strong> - 5/19/26</div>
                 <div class="version-item"><strong>1.10.0 Dark Mode Updated</strong> - 5/19/26</div>
@@ -470,7 +227,7 @@
 
         <footer>
             📅 Changes sync to everyone • Edits require password<br>
-            <span style="font-size: 0.7rem; color: #bbb;">Version 1.14.0</span>
+            <span style="font-size: 0.7rem; color: #bbb;">Version 1.13.0</span>
             <div id="lastEdited" style="font-size: 0.7rem; margin-top: 8px; color: #bbb;"></div>
             <br><br>
             <button class="edit-btn" onclick="showReleaseNotes()" style="background: #8b5cf6; width: auto; padding: 8px 20px;">📋 Version History</button>
@@ -510,42 +267,29 @@
             "Friday": { restaurant: "Little Caesars 🍕", cuisine: "Pizza", meetAt: "Downstairs Bathroom", extra: "Hot n Ready! 🍕", price: "$", distance: "0.8 km" }
         };
         
-        // Function to check if a given Wednesday is one of the last two Wednesdays of the month
         function isLastTwoWednesdays(date) {
-            // Get the day of week (0 = Sunday, 3 = Wednesday)
             if (date.getDay() !== 3) return false;
-            
             const year = date.getFullYear();
             const month = date.getMonth();
-            
-            // Get all Wednesdays in this month
             const wednesdays = [];
             const tempDate = new Date(year, month, 1);
-            
             while (tempDate.getMonth() === month) {
-                if (tempDate.getDay() === 3) { // Wednesday
+                if (tempDate.getDay() === 3) {
                     wednesdays.push(new Date(tempDate));
                 }
                 tempDate.setDate(tempDate.getDate() + 1);
             }
-            
-            // Get the last two Wednesdays (works for 4 OR 5 Wednesdays)
             const lastTwoWednesdays = wednesdays.slice(-2);
-            
-            // Check if current date is one of the last two Wednesdays
             return lastTwoWednesdays.some(wed => wed.getDate() === date.getDate());
         }
         
-        // Get the lunch time display based on date
         function getLunchTimeDisplay(date) {
-            // Check if it's one of the last two Wednesdays of the month
             if (isLastTwoWednesdays(date)) {
                 return { start: "12:00 PM", end: "1:00 PM", isSpecial: true, triggerHour: 12, triggerMinute: 0 };
             }
             return { start: "11:40 AM", end: "12:40 PM", isSpecial: false, triggerHour: 11, triggerMinute: 40 };
         }
         
-        // Update the lunch time badge
         function updateLunchTimeBadge(date) {
             const lunchTime = getLunchTimeDisplay(date);
             const badge = document.getElementById('lunchTimeBadge');
@@ -572,9 +316,6 @@
             }
         }
         
-        let visitAddedToday = false;
-        
-        // Get day name offset (0 = today, -1 = yesterday, 1 = tomorrow)
         function getDayName(offset) {
             const date = new Date();
             date.setDate(date.getDate() + offset);
@@ -587,30 +328,23 @@
             return date;
         }
         
-        // Check if a day is a weekend
         function isWeekend(dayName) {
             return dayName === "Saturday" || dayName === "Sunday";
         }
         
-        // Get time display for a specific day (for preview cards)
         function getPreviewTimeDisplay(date, dayName) {
             if (isWeekend(dayName)) return '';
             const lunchTime = getLunchTimeDisplay(date);
             return `${lunchTime.start} - ${lunchTime.end}`;
         }
         
-        // Load preview for yesterday and tomorrow
         async function loadPreviews() {
             const yesterdayName = getDayName(-1);
             const tomorrowName = getDayName(1);
             const yesterdayDate = getDateWithOffset(-1);
             const tomorrowDate = getDateWithOffset(1);
             
-            const yesterdayIsWeekend = isWeekend(yesterdayName);
-            const tomorrowIsWeekend = isWeekend(tomorrowName);
-            
-            // Load yesterday
-            if (yesterdayIsWeekend) {
+            if (isWeekend(yesterdayName)) {
                 document.getElementById('yesterdayRestaurant').innerHTML = '🌿 Weekend';
                 document.getElementById('yesterdayMeetup').innerHTML = 'No lunch plan';
                 document.getElementById('yesterdayTime').innerHTML = '';
@@ -623,8 +357,7 @@
                 document.getElementById('yesterdayTime').innerHTML = getPreviewTimeDisplay(yesterdayDate, yesterdayName);
             }
             
-            // Load tomorrow
-            if (tomorrowIsWeekend) {
+            if (isWeekend(tomorrowName)) {
                 document.getElementById('tomorrowRestaurant').innerHTML = '🌿 Weekend';
                 document.getElementById('tomorrowMeetup').innerHTML = 'No lunch plan';
                 document.getElementById('tomorrowTime').innerHTML = '';
@@ -638,73 +371,53 @@
             }
         }
         
-        async function addVisitAt1140() {
-            const torontoNow = new Date().toLocaleString('en-US', { timeZone: 'America/Toronto' });
-            const now = new Date(torontoNow);
-            
-            // Get today's lunch time (could be special)
-            const todayLunchTime = getLunchTimeDisplay(now);
-            
-            const currentHour = now.getHours();
-            const currentMinute = now.getMinutes();
-            const currentSecond = now.getSeconds();
-            
-            // Check if it's the trigger time for today (either 11:40 AM or 12:00 PM)
-            if (currentHour === todayLunchTime.triggerHour && 
-                currentMinute === todayLunchTime.triggerMinute && 
-                currentSecond >= 0 && currentSecond <= 5 && 
-                !visitAddedToday) {
-                
-                const today = new Date();
-                const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
-                const isWeekend = (dayName === "Saturday" || dayName === "Sunday");
-                
-                if (!isWeekend) {
-                    const snapshot = await database.ref('schedule/' + dayName).once('value');
-                    let plan = snapshot.val();
-                    if (!plan) plan = defaultSchedule[dayName];
-                    
-                    await incrementVisitCount(plan.restaurant);
-                    visitAddedToday = true;
-                    console.log("✅ Visit added at", todayLunchTime.start, "for:", plan.restaurant);
-                    loadRestaurantStats();
-                }
-            }
-            
-            if (currentHour === 0 && currentMinute === 0 && currentSecond === 0) {
-                visitAddedToday = false;
-            }
-        }
-        
-        async function incrementVisitCount(restaurantName) {
+        // MANUAL STATS FUNCTIONS
+        window.updateManualVisit = async function(restaurantName, change) {
             const statsRef = database.ref('restaurantStats/' + restaurantName);
             const snapshot = await statsRef.once('value');
             const currentData = snapshot.val() || { visits: 0, lastVisitDate: null, streak: 0 };
+            
+            let newVisits = (currentData.visits || 0) + change;
+            if (newVisits < 0) newVisits = 0;
+            
             const today = new Date().toDateString();
             
-            if (currentData.lastVisitDate === today) return;
-            
-            let lastWeekday = new Date();
-            lastWeekday.setDate(lastWeekday.getDate() - 1);
-            
-            while (lastWeekday.getDay() === 0 || lastWeekday.getDay() === 6) {
-                lastWeekday.setDate(lastWeekday.getDate() - 1);
+            if (change === 1) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                while (yesterday.getDay() === 0 || yesterday.getDay() === 6) {
+                    yesterday.setDate(yesterday.getDate() - 1);
+                }
+                const yesterdayString = yesterday.toDateString();
+                
+                let newStreak = 1;
+                if (currentData.lastVisitDate === yesterdayString) {
+                    newStreak = (currentData.streak || 0) + 1;
+                }
+                
+                await statsRef.set({
+                    visits: newVisits,
+                    lastVisitDate: today,
+                    streak: newStreak
+                });
+            } else if (change === -1) {
+                if (newVisits === 0) {
+                    await statsRef.set({
+                        visits: 0,
+                        lastVisitDate: null,
+                        streak: 0
+                    });
+                } else {
+                    await statsRef.set({
+                        visits: newVisits,
+                        lastVisitDate: currentData.lastVisitDate,
+                        streak: 0
+                    });
+                }
             }
             
-            const lastWeekdayString = lastWeekday.toDateString();
-            
-            let newStreak = 1;
-            if (currentData.lastVisitDate === lastWeekdayString) {
-                newStreak = (currentData.streak || 0) + 1;
-            }
-            
-            await statsRef.set({
-                visits: (currentData.visits || 0) + 1,
-                lastVisitDate: today,
-                streak: newStreak
-            });
             loadRestaurantStats();
-        }
+        };
         
         async function loadRestaurantStats() {
             const statsDiv = document.getElementById('statsContent');
@@ -716,12 +429,27 @@
                 const data = stats[restaurant] || { visits: 0, streak: 0 };
                 const emoji = restaurantEmojis[restaurant] || "📍";
                 let streakDisplay = data.streak > 0 ? `<div class="stats-streak"><span class="streak-fire">${data.streak >= 3 ? '🔥🔥' : (data.streak >= 2 ? '🔥' : '✨')}</span> ${data.streak} day streak!</div>` : `<div class="stats-streak">No streak yet</div>`;
-                html += `<div class="stats-item"><div class="stats-left"><div class="stats-pin">📌 ${emoji}</div><div class="stats-info"><div class="stats-name">${restaurant}</div>${streakDisplay}</div></div><div class="stats-right"><div class="stats-visits">${data.visits} visit${data.visits !== 1 ? 's' : ''}</div></div></div>`;
+                html += `
+                    <div class="stats-item">
+                        <div class="stats-left">
+                            <div class="stats-pin">📌 ${emoji}</div>
+                            <div class="stats-info">
+                                <div class="stats-name">${restaurant}</div>
+                                ${streakDisplay}
+                            </div>
+                        </div>
+                        <div class="stats-controls">
+                            <button class="stats-btn minus" onclick="updateManualVisit('${restaurant.replace(/'/g, "\\'")}', -1)">−</button>
+                            <div class="stats-visits">${data.visits}</div>
+                            <button class="stats-btn plus" onclick="updateManualVisit('${restaurant.replace(/'/g, "\\'")}', 1)">+</button>
+                        </div>
+                    </div>
+                `;
             }
             statsDiv.innerHTML = html;
         }
         
-        async function resetAllStats() {
+        window.resetAllStats = async function() {
             if (confirm("⚠️ Are you sure? This will reset ALL restaurant visit counts and streaks for everyone.")) {
                 for (const restaurant of restaurants) {
                     await database.ref('restaurantStats/' + restaurant).set({ visits: 0, streak: 0, lastVisitDate: null });
@@ -729,14 +457,13 @@
                 loadRestaurantStats();
                 alert("✅ All stats have been reset!");
             }
-        }
+        };
         
         async function loadAndDisplay() {
             const today = new Date();
             const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
             const isWeekend = (dayName === "Saturday" || dayName === "Sunday");
             
-            // Update the lunch time badge based on today's date
             updateLunchTimeBadge(today);
             
             if (isWeekend) {
@@ -906,8 +633,6 @@
         document.getElementById('darkModeBtn').addEventListener('click', function() { setDarkMode(true); });
         document.getElementById('lightModeBtn').addEventListener('click', function() { setDarkMode(false); });
         document.getElementById('passwordModal').addEventListener('click', function(e) { if (e.target === this) this.classList.remove('show'); });
-        
-        setInterval(addVisitAt1140, 1000);
         
         loadDarkModePreference();
         loadLastEdited();
